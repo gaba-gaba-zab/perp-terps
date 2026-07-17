@@ -36,6 +36,10 @@ go to Netlify via `git push`.
 5. **Do not edit `netlify.toml` or `astro.config.ts` without asking.** These are
    load-bearing for build/deploy. Same goes for `src/config.yaml`'s `site` block
    (affects sitemaps, SEO, permalinks).
+   - Exception: the `server.host` / `preview.host` settings (`'127.0.0.1'`) are
+     **intentional**. They force IPv4 loopback so the dev/preview server is
+     reachable through Codespace/VS Code port-forwarding (Astro otherwise binds
+     IPv6-only `::1`, which the forwarder can't hit). Don't remove them.
 
 ## Commands
 
