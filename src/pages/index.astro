@@ -1,0 +1,58 @@
+---
+import { getEntry, render } from 'astro:content';
+
+import PageLayout from '~/layouts/PageLayout.astro';
+
+import HeroSection from '~/components/sections/HeroSection.astro';
+import AboutSection from '~/components/sections/AboutSection.astro';
+import ServicesSection from '~/components/sections/ServicesSection.astro';
+import ContactSection from '~/components/sections/ContactSection.astro';
+
+const hero = await getEntry('sections', 'hero');
+const about = await getEntry('sections', 'about');
+const services = await getEntry('sections', 'services');
+const contact = await getEntry('sections', 'contact');
+
+if (!hero || !about || !services || !contact) {
+  throw new Error('Missing required section entry — expected hero/about/services/contact in src/content/');
+}
+
+const { Content: AboutBody } = await render(about);
+
+const metadata = {
+  title: 'Home',
+  description: hero?.data?.subtitle,
+};
+---
+
+<PageLayout metadata={metadata}>
+  <HeroSection id="top" title={hero?.data?.title} subtitle={hero?.data?.subtitle} actions={hero?.data?.actions} />
+
+  <AboutSection
+    id="about"
+    tagline={about?.data?.tagline}
+    title={about?.data?.title}
+    subtitle={about?.data?.subtitle}
+    items={about?.data?.items}
+  >
+    <AboutBody />
+  </AboutSection>
+
+  <ServicesSection
+    id="services"
+    tagline={services?.data?.tagline}
+    title={services?.data?.title}
+    subtitle={services?.data?.subtitle}
+    items={services?.data?.items}
+  />
+
+  <ContactSection
+    id="contact"
+    tagline={contact?.data?.tagline}
+    title={contact?.data?.title}
+    subtitle={contact?.data?.subtitle}
+    inputs={contact?.data?.inputs}
+    textarea={contact?.data?.textarea}
+    button={contact?.data?.button}
+  />
+</PageLayout>

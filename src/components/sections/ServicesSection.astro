@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+import type { Item } from '~/types';
+
+export interface Props {
+  id?: string;
+  tagline?: string;
+  title?: string;
+  subtitle?: string;
+  items?: Item[];
+}
+
+const { id, tagline, title, subtitle, items = [] } = Astro.props;
+---
+
+<WidgetWrapper id={id}>
+  <Headline tagline={tagline} title={title} subtitle={subtitle} />
+
+  {
+    items?.length ? (
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <div class="p-6 rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            {item.icon && (
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4">
+                <Icon name={item.icon} class="w-6 h-6" />
+              </div>
+            )}
+            <h3 class="font-semibold text-lg">{item.title}</h3>
+            {item.description && <p class="mt-2 text-muted">{item.description}</p>}
+          </div>
+        ))}
+      </div>
+    ) : null
+  }
+</WidgetWrapper>

@@ -1,0 +1,40 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+import type { Item } from '~/types';
+
+export interface Props {
+  id?: string;
+  tagline?: string;
+  title?: string;
+  subtitle?: string;
+  items?: Item[];
+}
+
+const { id, tagline, title, subtitle, items = [] } = Astro.props;
+---
+
+<WidgetWrapper id={id} containerClass="max-w-5xl">
+  <Headline tagline={tagline} title={title} subtitle={subtitle} />
+
+  {
+    Astro.slots.has('default') && (
+      <div class="mx-auto max-w-2xl mt-8 prose prose-lg dark:prose-invert">
+        <slot />
+      </div>
+    )
+  }
+
+  {
+    items?.length ? (
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <div class="p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+            <h3 class="font-semibold text-lg">{item.title}</h3>
+            {item.description && <p class="mt-2 text-muted">{item.description}</p>}
+          </div>
+        ))}
+      </div>
+    ) : null
+  }
+</WidgetWrapper>

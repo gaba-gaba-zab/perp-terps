@@ -1,0 +1,9 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+# pnpm project settings (see https://pnpm.io/settings).
+# `onlyBuiltDependencies` allowlists packages permitted to run install scripts;
+# pnpm blocks all postinstall scripts by default for supply-chain safety.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp

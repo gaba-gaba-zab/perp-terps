@@ -1,0 +1,13 @@
+{
+  "name": "opencode-astro",
+  "build": { "dockerfile": "Dockerfile" },
+  "mounts": [
+    "source=${localEnv:HOME}/.config/opencode,target=/home/node/.config/opencode,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": ["astro-build.astro-vscode", "bradlc.vscode-tailwindcss", "esbenp.prettier-vscode"]
+    }
+  },
+  "postCreateCommand": "opencode --version && pnpm --version"
+}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Netlify form detection</title>
+  </head>
+  <body>
+    <!--
+      Static copy of the contact form so Netlify's buildbot can detect it at
+      deploy time. Astro's SSG output (with compression / view transitions) can
+      hide the rendered form from the detector, so this plain-HTML mirror exists.
+
+      The real, styled form lives in:
+        src/components/sections/ContactSection.astro
+      and its field config lives in:
+        src/content/contact.md
+
+      Keep the `name="contact"` and the field names below IN SYNC with that form.
+      This file is intentionally not linked from the UI.
+    -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+  </body>
+</html>

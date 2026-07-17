@@ -1,0 +1,121 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+
+interface FormInput {
+  type?: string;
+  name: string;
+  label?: string;
+  autocomplete?: string;
+  placeholder?: string;
+  required?: boolean;
+}
+
+type InputType =
+  | 'text'
+  | 'email'
+  | 'tel'
+  | 'number'
+  | 'password'
+  | 'url'
+  | 'search'
+  | 'date'
+  | 'datetime-local'
+  | 'time'
+  | 'week'
+  | 'month'
+  | 'hidden'
+  | 'checkbox'
+  | 'radio'
+  | 'range'
+  | 'color'
+  | 'file'
+  | 'submit'
+  | 'reset'
+  | 'button'
+  | 'image';
+
+interface FormTextarea {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  rows?: number;
+}
+
+export interface Props {
+  id?: string;
+  tagline?: string;
+  title?: string;
+  subtitle?: string;
+  inputs?: FormInput[];
+  textarea?: FormTextarea;
+  button?: string;
+}
+
+const { id, tagline, title, subtitle, inputs = [], textarea, button = 'Send' } = Astro.props;
+
+const fieldClass =
+  'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900';
+---
+
+<WidgetWrapper id={id}>
+  <Headline tagline={tagline} title={title} subtitle={subtitle} />
+
+  <form
+    name="contact"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    action="/?submitted=true"
+    class="mx-auto max-w-xl rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8"
+  >
+    <input type="hidden" name="form-name" value="contact" />
+    <p class="hidden">
+      <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+    </p>
+
+    {
+      inputs.map((input) => (
+        <div class="mb-5">
+          {input.label && (
+            <label for={input.name} class="block text-sm font-medium mb-1">
+              {input.label}
+            </label>
+          )}
+          <input
+            type={input.type as InputType}
+            name={input.name}
+            id={input.name}
+            autocomplete={input.autocomplete}
+            placeholder={input.placeholder}
+            required={input.required}
+            class={fieldClass}
+          />
+        </div>
+      ))
+    }
+
+    {
+      textarea && (
+        <div class="mb-5">
+          {textarea.label && (
+            <label for={textarea.name} class="block text-sm font-medium mb-1">
+              {textarea.label}
+            </label>
+          )}
+          <textarea
+            id={textarea.name}
+            name={textarea.name}
+            rows={textarea.rows ?? 4}
+            placeholder={textarea.placeholder}
+            class={fieldClass}
+          />
+        </div>
+      )
+    }
+
+    <div class="mt-2">
+      <button type="submit" class="btn-primary w-full">{button}</button>
+    </div>
+  </form>
+</WidgetWrapper>

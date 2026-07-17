@@ -1,0 +1,31 @@
+site:
+  name: Your Company
+  site: 'https://example.com'
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId: false
+
+# Default SEO metadata
+metadata:
+  title:
+    default: 'Your Company'
+    template: '%s — Your Company'
+  description: 'A fast, modern website built with Astro and Tailwind CSS.'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: 'Your Company'
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+
+i18n:
+  language: en
+  textDirection: ltr
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

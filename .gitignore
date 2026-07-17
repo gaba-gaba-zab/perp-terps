@@ -1,0 +1,31 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.DS_Store
+Thumbs.db
+
+# deploy CLI artifacts
+.netlify/
+.vercel/
+
+# astro / TS build caches
+.astro/
+*.tsbuildinfo

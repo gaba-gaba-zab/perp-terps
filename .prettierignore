@@ -1,0 +1,7 @@
+dist
+node_modules
+.pnpm-store
+.astro
+.github
+.changeset
+pnpm-lock.yaml
