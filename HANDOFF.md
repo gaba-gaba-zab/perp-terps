@@ -160,6 +160,22 @@ backend only if generic-answer quality becomes the bottleneck.
 
 ## Session log
 
+### 2026-07-18 — README dedupe + identity fix
+
+Follow-up to the kickoff commit. Audited README.md against HANDOFF.md +
+AGENTS.md and found three conflicts and significant redundancy:
+- README title still said `astro-client-starter` (template, not client site).
+- Tagline described the repo as a reusable template — wrong framing.
+- Deploy instructions said `main`; actual default branch is `master`.
+
+Rewrote README to a tight human-facing doc: client identity, run commands,
+Node requirement, pointers to HANDOFF.md and AGENTS.md. Removed sections that
+duplicated AGENTS.md house rules (Editing content, Contact form, Deploy).
+Removed the irrelevant upstream AstroWind link.
+
+No project-state change — pure doc hygiene. Next session proceeds per the
+*Next actions* checklist above.
+
 ### 2026-07-18 — kickoff audit + handoff creation
 
 **Context:** first agent session on this client fork. Inherited
