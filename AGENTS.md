@@ -1,8 +1,10 @@
-# AGENTS.md — astro-client-starter
+# AGENTS.md — perp-terps
 
-A client-website template built on **Astro v6** + **Tailwind CSS v4**, derived
-from AstroWind and stripped to a reusable base. Content lives in Markdown; deploys
-go to Netlify via `git push`.
+Client website for **The Perpetual Terpsters Homegrow Gardening**
+(perpterps.com), forked from the `astro-client-starter` template (itself
+derived from AstroWind). Built on **Astro v6** + **Tailwind CSS v4**. Content
+lives in Markdown; deploys go to Netlify via `git push` to `master`. See
+`HANDOFF.md` for project state and next actions.
 
 ## House rules (read before editing)
 
@@ -53,7 +55,7 @@ go to Netlify via `git push`.
 
 **Node.js:** >= 22.12.0
 
-## Architecture (what survived the strip)
+## Architecture
 
 ```
 src/

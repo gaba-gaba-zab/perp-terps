@@ -160,6 +160,25 @@ backend only if generic-answer quality becomes the bottleneck.
 
 ## Session log
 
+### 2026-07-18 — AGENTS.md identity fix
+
+Follow-up to the README dedupe. Same bug class: AGENTS.md still wore the
+template's name tag after the fork. Three identity conflicts with HANDOFF.md
+fixed:
+- Title: `astro-client-starter` -> `perp-terps`.
+- Tagline: reframed from "reusable template, stripped to base" to "client
+  website for The Perpetual Terpsters, forked from astro-client-starter".
+- Architecture header: dropped "(what survived the strip)" parenthetical
+  (template-era framing).
+
+Left intentionally untouched (true today, will change when the work lands):
+- House rule #1 + verification checklist still say "five sections" — will
+  become six when blog is re-enabled (per *Next actions*).
+- Config system note still says "Blog is disabled" — will flip with the
+  blog re-enablement work.
+
+No project-state change — pure doc hygiene.
+
 ### 2026-07-18 — README dedupe + identity fix
 
 Follow-up to the kickoff commit. Audited README.md against HANDOFF.md +
