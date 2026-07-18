@@ -63,15 +63,20 @@ src/
   components/
     sections/              # HeroSection, AboutSection, ServicesSection, ContactSection
     widgets/               # Header, Footer (site chrome)
-    common/                # Image, Metadata, Favicons, ToggleTheme, …
+    common/                # Image, Metadata, ApplyColorMode, ToggleTheme, …
     ui/                    # Button, Headline, WidgetWrapper, Form (primitives)
+    Logo.astro             # brand lockup (renders SITE.name)
+    Favicons.astro         # <link rel="icon"> tags (consumes src/assets/favicons/)
     CustomStyles.astro     # CSS variables (colors, fonts, light/dark)
   layouts/
     Layout.astro           # <head>: metadata, favicons, analytics PLACEHOLDER
     PageLayout.astro       # Header + <main> + Footer (footer loaded from content)
+    LandingLayout.astro    # section-based page wrapper used by index.astro
+    MarkdownLayout.astro   # renders standalone Markdown pages
   pages/
     index.astro            # Home: loads 4 section entries, renders sections
     404.astro
+  utils/                   # permalinks, frontmatter, image helpers used by sections
   assets/styles/tailwind.css   # Tailwind v4 theme tokens + utilities
   config.yaml              # site metadata, SEO, theme (loaded via astrowind:config)
   navigation.ts            # header nav links/actions
@@ -97,3 +102,21 @@ After changes, confirm:
 2. `pnpm check` passes
 3. Homepage renders all sections (hero, about, services, contact, footer) with no
    console errors; dark mode and mobile menu still work
+
+## Handoff convention
+
+`HANDOFF.md` at the repo root is the living source of truth for project state
+and next actions. It is structured as:
+
+1. **Current state** — what the project is *today*. Always overwritten to
+   reflect reality at session end.
+2. **Next actions** — checklist of immediate work, grouped by area.
+3. **Open questions** — anything gating the next actions (client assets, copy,
+   decisions).
+4. **Session log** — append-only, newest-at-top. One dated entry per agent
+   session recording what changed and what's now next. Don't rewrite history —
+   the log is the audit trail.
+
+**Every agent session ends by** (1) refreshing *Current state* and *Next
+actions*, (2) appending a dated entry to *Session log*. New agents should read
+`HANDOFF.md` first before consulting the rest of the docs.
