@@ -4,10 +4,5 @@ import { SITE } from 'astrowind:config';
 import bannerLogo from '~/assets/images/perpterps_banner.png';
 ---
 
-<Image
-  src={bannerLogo}
-  alt={SITE?.name ?? 'Perpetual Terpsters'}
-  height={48}
-  class="h-12 w-auto"
-/>
+<Image src={bannerLogo} alt={SITE?.name ?? 'Perpetual Terpsters'} height={112} class="h-20 md:h-28 w-auto" />
 <span class="sr-only">{SITE?.name}</span>

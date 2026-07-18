@@ -27,10 +27,12 @@
 - **Site purpose:** content + services hybrid — educational grow content to
   drive traffic (blog/guides) plus a services/consulting offering that converts
   via the contact form. Blog deferred to Phase 3.5 (see *Next actions*).
-- **Phase:** 3 — **MVP customization shipped this session.** All template
-  placeholder copy has been replaced with brand copy; theme tokens are wired to
-  an earthy-green palette extracted from the client's banner art; header logo
-  + favicons now use the brand mark. Open review items below.
+- **Phase:** 3 — **MVP customization shipped, with banner-row header
+  restructure follow-up.** All template placeholder copy has been replaced
+  with brand copy; theme tokens are wired to an earthy-green palette extracted
+  from the client's banner art; header is a full-width brand bar above a
+  2-col nav row (see *Banner row restructure* below); favicons use the brand
+  mark. Open review items below.
 - **Stack:** Astro v6 + Tailwind v4, pnpm, Netlify deploy. Dev environment
   (devcontainer + OpenCode + GLM-5.2) is inherited as-is from the template —
   see `.devcontainer/` and the upstream template's handoff for env details.
@@ -48,9 +50,10 @@
   wired; dark uses lifted values for button visibility. `::selection` tinted
   olive. `tailwind.css` was not touched (it aliases the aw-color vars).
 - **Header logo** (`src/components/Logo.astro`): renders
-  `perpterps_banner.png` via `astro:assets` at `h-12` (48px tall); `SITE.name`
-  kept as `sr-only` for a11y/SEO. Old 🚀 emoji dropped. Operator flagged "might
-  change depending on how it looks" — easy single-file swap.
+  `perpterps_banner.png` via `astro:assets` at `h-20 md:h-28` (80 / 112px) in a
+  full-width banner row above the nav. `SITE.name` kept as `sr-only` for
+  a11y/SEO. Old 🚀 emoji dropped. See *Banner row restructure* for the layout
+  change and the new photo-asset sizing philosophy.
 - **Navigation** (`src/navigation.ts`): CTA text `Start a project` →
   `Free consultation`.
 - **Hero** (`src/content/hero.md`): text-only (HeroSection.astro has no image
@@ -98,6 +101,49 @@
   asking. **Runtime is unaffected** — Astro accepts the key; `pnpm build` is
   green. Surfaced for operator decision.
 
+### Banner row restructure (2026-07-18 follow-up)
+
+Operator flagged the header logo was "too small" — the original `h-10`/`h-12`
+(40–48px) treatment inherited `default.png`'s template sizing. Directive
+received: **break the template's layout rules for photo/brand assets** —
+brand imagery is no longer constrained to template defaults, even when that
+means reflowing header chrome, escaping the template grid, or exceeding the
+default header height. This philosophy applies going forward to all photo
+assets (e.g. the about-section `{width=320}` cap I added last session is
+wrong-headed under this directive — revert pending operator decision).
+
+What changed:
+
+- `Header.astro` split into two stacked rows inside `<header>`: a full-width
+  centered banner row (border-bottom separator, `py-2`) and a 2-col flex nav
+  row `[nav | actions]` (`py-0 md:py-3` so it collapses to 0-height on mobile
+  when the menu is closed). Whole header still sticks on scroll.
+- `Logo.astro` bumped `h-10` → `h-20 md:h-28` (80 / 112px). `w-auto` preserves
+  aspect; transparent PNG sits cleanly on any bg.
+- Mobile hamburger moved into the banner row (top-right absolute) — on mobile
+  the nav row is empty/hidden by default; tapping the hamburger toggles
+  `<nav>` and the actions div via the existing JS in `BasicScripts.astro`.
+- `BasicScripts.astro` selector `#header > div > div:last-child` →
+  `#header [data-aw-header-actions]` (3 occurrences). The positional selector
+  broke under the new two-row DOM; semantic attribute is structure-agnostic.
+  New `data-aw-header-actions` attribute added to the actions div in
+  `Header.astro`.
+- Asset-swap resilient: sizing is purely `h-*` cap + `w-auto`. Future banner
+  with different aspect auto-fits; no PNG-dims-magic-numbers anywhere.
+
+**Convention decision:** 2-col nav (nav-left + actions-right) — standard for
+consulting/marketing sites. Avoids the "missing logo" tell that an empty
+3-col col-1 would create once the banner moved to its own row.
+
+**Verification:** `pnpm build` green (2 pages, 3 brand images optimized).
+`pnpm check:eslint` clean. `pnpm check:prettier` clean on touched files
+(`Header.astro`, `Logo.astro`, `BasicScripts.astro` — 3 pre-existing
+warnings on untouched files remain). `pnpm check:astro` reports only the
+pre-existing `astro.config.ts:27` error (unchanged). Rendered HTML
+spot-checked: banner row, nav row, theme toggle, CTA, and both
+`data-aw-toggle-menu` / `data-aw-header-actions` hooks present in the right
+DOM positions for the mobile-menu JS.
+
 ---
 
 ## Next actions
@@ -106,11 +152,16 @@
 
 - [ ] **Visual review of rendered site** — `pnpm dev` and walk through every
       section. Especially:
-  - Header logo at `h-12` — operator flagged "might change depending on how it
-    looks". Square banner PNG at 48px tall may render too small if the lockup
-    has baked-in text; may need different aspect handling or a swap to text-
-    only logo.
+  - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-18:** banner-row
+    restructure shipped (see *Banner row restructure* under *Current state*).
+    Logo is now `h-20 md:h-28` in a full-width brand bar above a 2-col nav
+    row. **Still review:** does the banner row's `py-2` + 80/112px height feel
+    right on desktop and mobile? Want it taller/shorter? Want the banner row
+    sticky-collapsed on scroll?
   - About-section vertical PNG — check it doesn't dominate the section.
+    (Operator directive received: photo assets should not be capped to
+    template-conservative sizes — the `{width=320}` cap I added last session
+    is likely wrong under the new philosophy. Decision pending.)
   - Dark mode contrast on the new green palette (primary is dark forest on
     light bg; secondary is lighter on dark bg).
 - [ ] **`perpterps_withcopy.png` copy review** — operator said "include all of
@@ -183,9 +234,9 @@ backend only if generic-answer quality becomes the bottleneck.
   except contact" but I cannot OCR images in this env. Hero/about copy was
   drafted blind from the brief; operator needs to compare side-by-side and
   identify what to mirror/replace.
-- **Header logo visual** — operator flagged "might change depending on how it
-  looks". Square 1024² banner PNG rendered at 48px tall may be too small if
-  the lockup has baked-in text. Decide after `pnpm dev` review.
+- **About-section `{width=320}` cap** — under the new photo-asset philosophy
+  (no template-style conservative sizing), should this be reverted? Operator
+  scoped it out of this pass but flagged for follow-up.
 - **Facebook URL** — exact profile URL still pending. Footer link is `#`.
 - **Domain registrar** — does the client own `perpterps.com`, or do we
   register it? Which registrar? (Launch blocker.)
@@ -202,6 +253,82 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-18 — Full-width banner row restructure
+
+**Context:** Operator resumed after preemptively ending the prior Phase 3 MVP
+session mid-handoff. Surfaced 4 uncommitted visual-review tweaks (smaller
+logo `h-12` → `h-10`, about-image capped `{width=320}`, two brand PNGs
+swapped) from that interrupted session. Then operator flagged the *resulting*
+logo was still too small: "It's too small. It's respecting the layout in
+`default.png`. Moving forward, let's break the rules of that layout with
+respect to photo assets." New directive received and recorded under
+*Banner row restructure* → photo/brand assets are no longer constrained to
+template defaults.
+
+**Shipped (3 files, banner-row restructure):**
+
+- `src/components/widgets/Header.astro` — split the single 3-col grid into
+  two stacked rows: a full-width banner row (border-bottom separator, banner
+  centered, mobile hamburger absolute top-right) and a 2-col flex nav row
+  `[nav | actions]`. Added `data-aw-header-actions` attribute on the actions
+  div so the mobile-menu JS can find it under the new DOM. Wrapper uses
+  `py-0 md:py-3` so the nav row collapses to 0-height on mobile when the
+  menu is closed (children stay `hidden md:flex`, JS toggles `.hidden`).
+  Outer `<header>` keeps `sticky top-0` — both rows pin on scroll.
+- `src/components/Logo.astro` — `h-10` (40px) → `h-20 md:h-28` (80 / 112px).
+  `w-auto` preserves aspect; transparent PNG sits cleanly on any bg.
+  `height={112}` on the `<Image>` matches the desktop cap (astro:assets
+  hint).
+- `src/components/common/BasicScripts.astro` — 3 occurrences of
+  `document.querySelector('#header > div > div:last-child')` →
+  `document.querySelector('#header [data-aw-header-actions]')`. The
+  positional selector broke under the new two-row DOM (would now match the
+  banner-inner div instead of the actions div). Semantic selector is
+  structure-agnostic and won't break on future Header refactors.
+
+**Decisions logged:**
+
+- **Sticky:** whole header sticks (banner + nav) — biggest brand presence.
+- **Nav layout:** 2-col flex (nav-left + actions-right) — standard for
+  consulting/marketing sites, avoids the "missing logo" tell.
+- **Banner height:** medium (`h-20 md:h-28`, 80 / 112px).
+- **Scope:** banner only this pass. About-section `{width=320}` cap stays
+  for now — flagged under *Open questions* for the same photo-asset
+  philosophy.
+- **Asset resilience:** all sizing via `h-*` cap + `w-auto`, never
+  hard-coded pixel widths tied to PNG dims. Future asset swap auto-fits.
+
+**Operator decisions still pending (in *Open questions*):**
+
+- About-section `{width=320}` cap — revert under new photo-asset philosophy?
+- Brand PNGs marked "might change" — layout will auto-adapt via `h-*` cap.
+
+**Verification:**
+
+- `pnpm build` — **GREEN.** 2 pages, 3 brand images optimized (banner now
+  emits at the new aspect: 1024×474 → `h-20 md:h-28` rendered, width=242
+  auto-computed).
+- `pnpm check:astro` — **1 PRE-EXISTING ERROR** at `astro.config.ts:27`
+  (unchanged).
+- `pnpm check:eslint` — clean.
+- `pnpm check:prettier` — clean on touched files; 3 pre-existing warnings
+  remain on files I didn't touch (`AGENTS.md`, `HANDOFF.md`,
+  `ContactSection.astro`).
+- Spot-checked rendered `dist/index.html`: banner row present with `<img
+  height="112" width="242" class="h-20 md:h-28 w-auto">`, nav with `hidden
+  md:flex`, actions div with `data-aw-header-actions`, theme toggle, CTA
+  "Free consultation" all in correct DOM positions.
+
+**Next-session priorities (in *Next actions* order):**
+
+1. Operator visual review of the new banner row in `pnpm dev` — especially
+   the 112px desktop height and whether sticky-collapsing the banner on
+   scroll would feel better.
+2. About-section `{width=320}` revert decision (same photo-asset
+   philosophy).
+3. Outstanding Phase 3.5 items (blog, hero image support, vector favicon).
+4. Pre-launch blockers (FB URL, domain registrar, OG image decision).
 
 ### 2026-07-18 — Phase 3 MVP customization shipped
 
