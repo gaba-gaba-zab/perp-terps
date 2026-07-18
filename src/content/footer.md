@@ -1,10 +1,10 @@
 ---
-footNote: '&copy; 2026 Your Company. All rights reserved.'
+footNote: '&copy; 2026 The Perpetual Terpsters Homegrow Gardening.'
 secondaryLinks:
-  - text: 'Privacy'
-    href: '#'
-  - text: 'Terms'
-    href: '#'
+  - text: '(609) 300-9512'
+    href: 'tel:+16093009512'
+  - text: 'perpterps@gmail.com'
+    href: 'mailto:perpterps@gmail.com'
 links:
   - title: 'Sections'
     links:
@@ -15,10 +15,13 @@ links:
       - text: 'Contact'
         href: '#contact'
 socialLinks:
-  - ariaLabel: 'GitHub'
-    icon: 'tabler:brand-github'
+  - ariaLabel: 'Facebook'
+    icon: 'tabler:brand-facebook'
     href: '#'
-  - ariaLabel: 'X'
-    icon: 'tabler:brand-x'
-    href: '#'
+  - ariaLabel: 'Instagram'
+    icon: 'tabler:brand-instagram'
+    href: 'https://instagram.com/perpterps'
+  - ariaLabel: 'YouTube'
+    icon: 'tabler:brand-youtube'
+    href: 'https://www.youtube.com/@ThePerpetualTerpsters'
 ---

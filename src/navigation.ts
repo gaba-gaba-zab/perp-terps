@@ -11,5 +11,5 @@ export const headerData: { links: NavLink[]; actions: CallToAction[] } = {
     { text: 'Services', href: '/#services' },
     { text: 'Contact', href: '/#contact' },
   ],
-  actions: [{ text: 'Start a project', href: '/#contact', variant: 'primary' }],
+  actions: [{ text: 'Free consultation', href: '/#contact', variant: 'primary' }],
 };

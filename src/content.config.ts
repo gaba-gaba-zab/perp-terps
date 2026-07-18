@@ -36,6 +36,13 @@ const socialLinkSchema = z.object({
   href: z.string(),
 });
 
+const contactMethodSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  href: z.string(),
+  icon: z.string().optional(),
+});
+
 const sectionsCollection = defineCollection({
   loader: glob({ pattern: ['*.{md,mdx}'], base: 'src/content' }),
   schema: z.object({
@@ -61,6 +68,7 @@ const sectionsCollection = defineCollection({
     links: z.array(z.object({ title: z.string(), links: z.array(linkSchema) })).optional(),
     secondaryLinks: z.array(linkSchema).optional(),
     socialLinks: z.array(socialLinkSchema).optional(),
+    contactMethods: z.array(contactMethodSchema).optional(),
     footNote: z.string().optional(),
   }),
 });

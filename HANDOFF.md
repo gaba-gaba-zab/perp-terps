@@ -19,106 +19,135 @@
   upstream commit `9ba7232` (the template's last polish commit before this
   fork). Remote: `git@github.com:gaba-gaba-zab/perp-terps.git`, branch `master`.
 - **Client:** **The Perpetual Terpsters Homegrow Gardening** — a cannabis-
-  adjacent homegrow cultivation / gardening brand.
+  adjacent homegrow cultivation / gardening brand based in **New Jersey**.
   - Display name (header, nav, logo lockup): **Perpetual Terpsters**
   - Full name (footer copyright, SEO title, `<title>` tag): **The Perpetual
     Terpsters Homegrow Gardening**
-  - Target domain: **perpterps.com**
+  - Target domain: **perpterps.com** (DNS/registrar still pending)
 - **Site purpose:** content + services hybrid — educational grow content to
   drive traffic (blog/guides) plus a services/consulting offering that converts
-  via the contact form. Products are a possible later addition.
-- **Phase:** 3 kickoff (per-client). Template strip + devcontainer + AGENTS.md
-  all landed via inherited commits. **No client-specific customization has
-  shipped yet** — every content file still contains template placeholder copy
-  ("Your Company", "We build fast, modern websites…").
+  via the contact form. Blog deferred to Phase 3.5 (see *Next actions*).
+- **Phase:** 3 — **MVP customization shipped this session.** All template
+  placeholder copy has been replaced with brand copy; theme tokens are wired to
+  an earthy-green palette extracted from the client's banner art; header logo
+  + favicons now use the brand mark. Open review items below.
 - **Stack:** Astro v6 + Tailwind v4, pnpm, Netlify deploy. Dev environment
   (devcontainer + OpenCode + GLM-5.2) is inherited as-is from the template —
   see `.devcontainer/` and the upstream template's handoff for env details.
+
+### What shipped this session (Phase 3 MVP)
+
+- **Identity/metadata** (`src/config.yaml`): name, site URL, SEO title +
+  template, description (NJ homegrow framing), OG site_name all swapped to
+  Perpetual Terpsters. `site` block edit was approved by operator (house rule
+  #5 exception). OG image still points at template `default.png` (deferred —
+  see *Open questions*).
+- **Theme palette** (`src/components/CustomStyles.astro`): primary
+  `#12351B` (deep forest), secondary `#3B5A21` (mid leaf), accent `#899C35`
+  (olive) — sampled from the banner art via ImageMagick. Light + dark both
+  wired; dark uses lifted values for button visibility. `::selection` tinted
+  olive. `tailwind.css` was not touched (it aliases the aw-color vars).
+- **Header logo** (`src/components/Logo.astro`): renders
+  `perpterps_banner.png` via `astro:assets` at `h-12` (48px tall); `SITE.name`
+  kept as `sr-only` for a11y/SEO. Old 🚀 emoji dropped. Operator flagged "might
+  change depending on how it looks" — easy single-file swap.
+- **Navigation** (`src/navigation.ts`): CTA text `Start a project` →
+  `Free consultation`.
+- **Hero** (`src/content/hero.md`): text-only (HeroSection.astro has no image
+  slot — extending it is Phase 3.5 scope). Headline "Homegrow help, start to
+  harvest." Subtitle establishes NJ + free consults + medical-patient support.
+  CTAs: Free consultation / See services.
+- **About** (`src/content/about.md`): tagline/title/subtitle, 3 pillars
+  (Hands-on in NJ, Medical-patient friendly, Beginner to advanced), 2-sentence
+  body story. `perpterps_vertical.png` dropped into body via markdown image
+  syntax.
+- **Services** (`src/content/services.md`): all 8 services rendered as items
+  with tabler icons + warm+earthy 1-line descriptions:
+  Free Consultation (`message-chatbot`), Free Seed Starting for Medical
+  Patients (`seedling`), Installation of Grow Equipment (`tools`), Grow
+  Monitoring Service (`activity-heartbeat`), Pest & Prevention Control (`bug`),
+  Plant Training (`plant-2`), Harvest Assistance (`scissors`), Maintenance &
+  Support (`heart-handshake`). Two free services badged in description copy.
+- **Contact** (`src/content/contact.md` + `ContactSection.astro` +
+  `content.config.ts` + `pages/index.astro`): extended the sections schema with
+  optional `contactMethods: [{label, value, href, icon}]`; ContactSection now
+  renders phone + email as a 2-col card grid above the form. Netlify form
+  fields unchanged (name/email/message) — `public/netlify-form.html`
+  intentionally not touched.
+- **Footer** (`src/content/footer.md`): copyright `© 2026 The Perpetual
+  Terpsters Homegrow Gardening.`; 3 socials (FB placeholder `#`, IG
+  `instagram.com/perpterps`, YT `youtube.com/@ThePerpetualTerpsters`); phone
+  + email as `secondaryLinks`. Old Privacy/Terms placeholders dropped.
+- **Favicons** (`src/assets/favicons/`): generated from `perpterps_banner.png`
+  via ImageMagick. `favicon.ico` (16+32), `apple-touch-icon.png` (180²),
+  `favicon.svg` (PNG-in-SVG wrapper — potrace unavailable so no true vector).
+  `Favicons.astro` mask-icon color updated `#8D46E7` → `#12351B`.
+- **Cleanup:** deleted unreferenced template assets `app-store.png`,
+  `google-play.png`, `hero-image.png`. Renamed client-uploaded
+  `perpterps_*.PNG` → lowercase `.png` (filesystem is case-insensitive but TS
+  module declarations only match lowercase — this resolves the
+  `Cannot find module` error in `Logo.astro`). Kept template `default.png`
+  as OG image (Tier 3 Option A).
+
+### Pre-existing issues surfaced (not caused by this session)
+
+- **`pnpm check` fails on `astro.config.ts:27`** — TS complains `'preview'
+  does not exist in type 'AstroUserConfig<never, never, never>'`. This is the
+  intentional IPv4-loopback `preview.host: '127.0.0.1'` block from upstream
+  commit `3079e63`. House rule #5 forbids editing `astro.config.ts` without
+  asking. **Runtime is unaffected** — Astro accepts the key; `pnpm build` is
+  green. Surfaced for operator decision.
 
 ---
 
 ## Next actions
 
-### Content
+### Review pass (operator)
 
-- [ ] `src/config.yaml`
-  - `site.name`: `"Perpetual Terpsters"`
-  - `site.site`: `"https://perpterps.com"`
-  - SEO `metadata.title.default`: `"The Perpetual Terpsters Homegrow Gardening"`
-  - `metadata.title.template`: `"%s — The Perpetual Terpsters Homegrow Gardening"`
-  - `metadata.description`: brand-appropriate description
-- [ ] `src/content/hero.md` — headline, subtitle, CTAs (need client copy)
-- [ ] `src/content/about.md` — brand story / about copy (need client copy)
-- [ ] `src/content/services.md` — services / consulting offerings + descriptions
-  (need client copy)
-- [ ] `src/content/contact.md` — tagline + subtitle copy
-- [ ] `src/content/footer.md`
-  - `footNote`: `"&copy; 2026 The Perpetual Terpsters Homegrow Gardening."`
-  - `socialLinks`: replace GitHub + X with **Facebook** + **Instagram**
-    - icons: `tabler:brand-facebook`, `tabler:brand-instagram`
-    - ariaLabels: `"Facebook"`, `"Instagram"`
-    - hrefs: pending client FB/IG URLs
-  - `secondaryLinks`: add **phone** (`tel:+1…`) and **Gmail** (`mailto:…`)
-    alongside the existing Privacy/Terms placeholders
-- [ ] `src/navigation.ts` — nav links + CTA text
-- [ ] Swap brand assets in `src/assets/`:
-  - `favicons/{favicon.ico, favicon.svg, apple-touch-icon.png}` — brand mark
-  - `images/hero-image.png` — hero visual
-  - `images/default.png` — OG image (must comply with Meta/Google ad policies
-    if paid social is ever planned)
+- [ ] **Visual review of rendered site** — `pnpm dev` and walk through every
+      section. Especially:
+  - Header logo at `h-12` — operator flagged "might change depending on how it
+    looks". Square banner PNG at 48px tall may render too small if the lockup
+    has baked-in text; may need different aspect handling or a swap to text-
+    only logo.
+  - About-section vertical PNG — check it doesn't dominate the section.
+  - Dark mode contrast on the new green palette (primary is dark forest on
+    light bg; secondary is lighter on dark bg).
+- [ ] **`perpterps_withcopy.png` copy review** — operator said "include all of
+      it except contact" referring to copy baked into the image. I drafted
+      hero/about copy blind from the brief (cannot OCR in this env). Compare
+      side-by-side and tell me what to mirror / replace / drop.
+- [ ] **Form submission test in prod** — Netlify Forms only works after
+      deploy; first submission often lands in client's Gmail spam folder.
 
-### Component extension
+### Pre-launch blockers
 
-- [ ] Extend `src/content/contact.md` schema with a `contactMethods` array
-      (label, value, href, icon) for phone + email.
-- [ ] Extend `src/components/sections/ContactSection.astro` to render the
-      `contactMethods` block above/beside the form (~15 LOC).
-      - Phone renders as `tel:` link, Gmail as `mailto:` link.
-      - Keep the Netlify form intact (don't break form-name/hidden fields).
+- [ ] **Facebook URL** — still pending; footer link is `#`. Replace before
+      deploy.
+- [ ] **Domain registrar** — pending decision. Client owns it / we register /
+      defer to Netlify subdomain?
+- [ ] **OG image decision** — keep template `default.png` (Tier 3 Option A,
+      current state), swap to a brand asset, or drop entirely? Affects link
+      unfurls on FB/X.
 
-### Re-enable blog (significant — content + services hybrid needs it)
+### Phase 3.5 (post-MVP)
 
-The template was deliberately stripped with `APP_BLOG` disabled. For this
-client's "content + services" mix, the blog must come back.
+- [ ] **Re-enable blog** — significant. Flip `APP_BLOG` in `config.yaml`, add
+      `blog` collection to `content.config.ts`, add `src/pages/blog/` listing
+      + post template using `MarkdownLayout`, add **Guides** nav entry, update
+      AGENTS.md house rule #1 ("five sections" → six).
+- [ ] **Optional hero image** — `HeroSection.astro` currently has no image
+      slot. Could extend (~15 LOC) if operator wants a hero visual.
+- [ ] **True vector `favicon.svg`** — current is a PNG-in-SVG wrapper. If a
+      vector logo source arrives, replace.
+- [ ] **`pnpm check` resolution** — operator decision on the
+      `astro.config.ts` `preview` TS error (fix vs. suppress vs. ignore).
 
-- [ ] Flip `APP_BLOG` flag in `src/config.yaml`.
-- [ ] Add a `blog` collection to `src/content.config.ts` (AstroWind's glob
-      pattern is `src/content/blog/*.{md,mdx}` — well-documented upstream).
-- [ ] Add `src/pages/blog/index.astro` (post listing) and
-      `src/pages/blog/[...slug].astro` (post template using MarkdownLayout).
-- [ ] Add a **Guides** entry to `src/navigation.ts`.
-- [ ] Update `AGENTS.md` house rule #1 — "five sections" expands to include
-      blog as a sixth editable content area.
-
-### Brand / theme
-
-- [ ] Pick color tokens in `src/assets/styles/tailwind.css` (`@theme` block:
-      `--color-primary`, `--color-secondary`, …).
-- [ ] Set raw CSS vars in `src/components/CustomStyles.astro`
-      (`--aw-color-primary`, etc.) for both light + dark.
-- [ ] Confirm typography (`--aw-font-*` in CustomStyles, `font-heading` /
-      `font-default` usage in components).
-
-### Regulated-niche considerations
+### Regulated-niche considerations (deferred — unchanged from prior session)
 
 - [ ] **Age gate (21+): DEFERRED** — educational + consulting framing likely
       doesn't require it; revisit only if product sales are added later.
-      Decide between JS interstitial vs. server-side check at that point.
-- [ ] **SEO:** lean into "homegrow gardening" framing in copy and slugs for
-      ad-policy friendliness. Confirm `metadata.robots` is permissive (default
-      `index: true, follow: true` is fine for educational content).
 - [ ] **Payment processor:** DEFERRED — only relevant if commerce is added.
-      Stripe/PayPal generally accept gardening/educational merchants; would
-      need re-evaluation if the catalog shifts to direct cannabis products.
-
-### Launch
-
-- [ ] Create Netlify site, connect to this repo, configure `perpterps.com` DNS.
-- [ ] Test Netlify Forms delivery → confirm submissions reach the client's
-      Gmail inbox (check spam folder the first time).
-- [ ] `pnpm build && pnpm check` pass clean.
-- [ ] Verify mobile + dark mode + the IPv4-loopback dev server
-      (see `AGENTS.md` house rule #5 — don't strip the `127.0.0.1` host!).
 
 ---
 
@@ -145,27 +174,101 @@ backend only if generic-answer quality becomes the bottleneck.
 
 ---
 
-## Open questions (gate the next session)
+## Open questions (gate launch / Phase 3.5)
 
-- **Brand assets** — logo (vector preferred), hero photo, brand color palette.
-  Received yet? If not, who's producing them and by when?
-- **Contact info** — phone number + Gmail address for the contact section +
-  footer?
-- **Social URLs** — exact Facebook + Instagram profile URLs?
-- **Copy** — is the client providing About + Services copy, or are we drafting
-  from a brief for their review?
-- **Initial blog topics / content calendar** — what are the first 3–5 guides
-  or posts? (Drives whether blog launch blocks the MVP or follows it.)
-- **Consulting pricing** — display "starting at $X", "request a quote", or
-  hide pricing entirely?
-- **Domain registrar** — does the client already own `perpterps.com`, or do we
-  register it? Which registrar?
-- **Age-gate jurisdictions** — only relevant once product sales are added, but
-  worth noting the target market now (US states? specific countries?).
+- **Brand OG image** — keep template `default.png` for link unfurls (current),
+  swap to a brand asset, or drop entirely? Cannabis-adjacent imagery may need
+  Meta/Google ad-policy review if paid social is ever planned.
+- **`perpterps_withcopy.png` content** — operator said "include all of it
+  except contact" but I cannot OCR images in this env. Hero/about copy was
+  drafted blind from the brief; operator needs to compare side-by-side and
+  identify what to mirror/replace.
+- **Header logo visual** — operator flagged "might change depending on how it
+  looks". Square 1024² banner PNG rendered at 48px tall may be too small if
+  the lockup has baked-in text. Decide after `pnpm dev` review.
+- **Facebook URL** — exact profile URL still pending. Footer link is `#`.
+- **Domain registrar** — does the client own `perpterps.com`, or do we
+  register it? Which registrar? (Launch blocker.)
+- **Initial blog topics / content calendar** — drives Phase 3.5 blog launch.
+  First 3–5 guides or posts?
+- **`pnpm check` resolution** — `astro.config.ts:27` `preview` block throws
+  a TS error (pre-existing). Fix it (requires editing `astro.config.ts`,
+  gated on house rule #5), suppress, or accept as a known-broken check?
+- **Consulting pricing display** — operator answer was "Free consultations
+  and Free seed starting for medical patients" (no pricing on paid services).
+  Confirm "request a quote / no price shown" framing for the 6 paid services
+  is the long-term call vs. eventual tier display.
 
 ---
 
 ## Session log
+
+### 2026-07-18 — Phase 3 MVP customization shipped
+
+**Context:** First build session on the per-client fork. Plan-mode review first
+(surfaced 8 handoff open questions, operator answered; then operator flipped
+to Build). Executed the full sequenced plan top-to-bottom.
+
+**Shipped (12 work items):**
+- Identity/metadata swap in `src/config.yaml` (operator approved the `site`
+  block edit per house rule #5). Domain `perpterps.com` wired canonical
+  despite DNS still pending.
+- Theme palette in `CustomStyles.astro`: deep-forest primary `#12351B`,
+  mid-leaf secondary `#3B5A21`, olive accent `#899C35`. Sampled from the
+  client's banner PNG via ImageMagick. Light + dark both wired; dark uses
+  lifted values for button visibility.
+- Header logo in `Logo.astro`: now renders `perpterps_banner.png` at `h-12`
+  via `astro:assets`, `SITE.name` as `sr-only`. Old 🚀 emoji dropped.
+- Nav CTA: `Start a project` → `Free consultation`.
+- Hero copy: text-only (HeroSection.astro has no image slot — extending is
+  Phase 3.5). Headline "Homegrow help, start to harvest." + NJ/medical-
+  patient subtitle.
+- About: tagline/title/subtitle, 3 pillars (NJ / medical-patient / beginner-
+  to-advanced), 2-sentence body, `perpterps_vertical.png` dropped into the
+  markdown body.
+- Services: all 8 services rendered with tabler icons + warm+earthy
+  descriptions. Two free services badged in copy.
+- Contact: extended sections schema with optional `contactMethods`
+  (`content.config.ts`); ContactSection.astro renders phone + email cards
+  above the form (~30 LOC added); Netlify form fields untouched.
+- Footer: copyright `© 2026 The Perpetual Terpsters Homegrow Gardening.`,
+  3 socials (FB `#` pending, IG, YT), phone + email as secondary links.
+  Dropped Privacy/Terms placeholders.
+- Favicons: regenerated all 3 from `perpterps_banner.png` via ImageMagick.
+  `favicon.svg` is a PNG-in-SVG wrapper (potrace unavailable, no true vector).
+  Favicons.astro mask-icon color `#8D46E7` → `#12351B`.
+- Cleanup: deleted unreferenced `app-store.png`, `google-play.png`,
+  `hero-image.png`. Renamed client-supplied `perpterps_*.PNG` → lowercase
+  `.png` (case-insensitive FS + TS module decls only match lowercase).
+- Kept template `default.png` as OG image (Tier 3 Option A).
+
+**Verification:**
+- `pnpm build` — **GREEN.** 2 pages built, 3 brand images optimized and
+  emitted, sitemap generated. Spot-checked rendered HTML: title, description,
+  all 8 services, contact methods, footer copyright + 3 socials all
+  confirmed present.
+- `pnpm check` — **1 PRE-EXISTING ERROR** at `astro.config.ts:27` (the
+  intentional IPv4-loopback `preview` block from upstream commit `3079e63`).
+  Not caused by this session; house rule #5 forbids editing that file
+  without operator permission. Runtime is unaffected — Astro accepts the
+  key. Surfaced for operator decision.
+
+**Operator decisions logged:**
+- Yes: edit `config.yaml` `site` block.
+- Yes: hero text-only for MVP (banner PNG only in header, vertical PNG in
+  About).
+- Yes: drop Privacy/Terms placeholder links.
+- "Only remove Tier 1" — boilerplate sweep narrowed to the 3 unreferenced
+  images; orphaned components (Timeline, Form, SocialShare, MarkdownLayout)
+  all kept.
+
+**Identified for next session:**
+- Operator visual review of rendered site — especially header logo size and
+  the withcopy.PNG copy mirror (I drafted blind, cannot OCR).
+- Facebook URL still pending; pre-launch blocker.
+- Domain registrar still pending; pre-launch blocker.
+- Phase 3.5: blog re-enablement, optional hero image support, true vector
+  favicon, and the `astro.config.ts` TS-error decision.
 
 ### 2026-07-18 — onboarding callout for next agent
 

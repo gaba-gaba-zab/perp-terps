@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
 
@@ -42,6 +43,13 @@ interface FormTextarea {
   rows?: number;
 }
 
+interface ContactMethod {
+  label?: string;
+  value?: string;
+  href?: string;
+  icon?: string;
+}
+
 export interface Props {
   id?: string;
   tagline?: string;
@@ -50,9 +58,19 @@ export interface Props {
   inputs?: FormInput[];
   textarea?: FormTextarea;
   button?: string;
+  contactMethods?: ContactMethod[];
 }
 
-const { id, tagline, title, subtitle, inputs = [], textarea, button = 'Send' } = Astro.props;
+const {
+  id,
+  tagline,
+  title,
+  subtitle,
+  inputs = [],
+  textarea,
+  button = 'Send',
+  contactMethods = [],
+} = Astro.props;
 
 const fieldClass =
   'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900';
@@ -60,6 +78,31 @@ const fieldClass =
 
 <WidgetWrapper id={id}>
   <Headline tagline={tagline} title={title} subtitle={subtitle} />
+
+  {
+    contactMethods?.length ? (
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 max-w-xl mx-auto">
+        {contactMethods.map((method) => (
+          <a
+            href={method.href}
+            class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-primary hover:bg-primary/5 transition"
+          >
+            {method.icon && (
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
+                <Icon name={method.icon} class="w-5 h-5" />
+              </span>
+            )}
+            <span class="min-w-0">
+              {method.label && (
+                <span class="block text-xs uppercase tracking-wide text-muted">{method.label}</span>
+              )}
+              <span class="block font-medium text-page truncate">{method.value}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    ) : null
+  }
 
   <form
     name="contact"

@@ -1,6 +1,6 @@
 site:
-  name: Your Company
-  site: 'https://example.com'
+  name: 'Perpetual Terpsters'
+  site: 'https://perpterps.com'
   base: '/'
   trailingSlash: false
 
@@ -9,14 +9,14 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: 'Your Company'
-    template: '%s — Your Company'
-  description: 'A fast, modern website built with Astro and Tailwind CSS.'
+    default: 'The Perpetual Terpsters Homegrow Gardening'
+    template: '%s — The Perpetual Terpsters Homegrow Gardening'
+  description: 'NJ-based homegrow gardening consultants. Free consultations and free seed starting for medical patients — hands-on help from setup to harvest.'
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: 'Your Company'
+    site_name: 'Perpetual Terpsters'
     images:
       - url: '~/assets/images/default.png'
         width: 1200
