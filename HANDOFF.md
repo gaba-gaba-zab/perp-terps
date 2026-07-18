@@ -4,6 +4,13 @@
 > then append a dated entry to **Session log**. See `AGENTS.md` → *Handoff
 > convention* for the full rule.
 
+> **New agent? Start here:** Read this whole file (it's short), then
+> `AGENTS.md` house rules. Most *Next actions* are gated on *Open questions*
+> (client assets, copy, FB/IG URLs, contact info, domain registrar) — confirm
+> those answers before building, otherwise you'll be re-creating placeholder
+> content. If an answer is missing, surface it to the operator first instead
+> of guessing.
+
 ---
 
 ## Current state
@@ -159,6 +166,14 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-18 — onboarding callout for next agent
+
+Added a "New agent? Start here" blockquote to the top of this file making the
+gating explicit: most *Next actions* depend on *Open questions* being
+answered (client assets, copy, FB/IG URLs, contact info). Goal is to prevent
+a fresh agent from charging ahead and filling in placeholder content with
+guessed values. No project-state change — pure onboarding hygiene.
 
 ### 2026-07-18 — AGENTS.md identity fix
 
