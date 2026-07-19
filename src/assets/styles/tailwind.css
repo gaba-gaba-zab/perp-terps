@@ -10,6 +10,19 @@
   --color-primary: var(--aw-color-primary);
   --color-secondary: var(--aw-color-secondary);
   --color-accent: var(--aw-color-accent);
+
+  /* Named palette (mode-invariant) */
+  --color-forest-deep: var(--aw-color-forest-deep);
+  --color-moss: var(--aw-color-moss);
+  --color-chartreuse: var(--aw-color-chartreuse);
+  --color-chartreuse-bright: var(--aw-color-chartreuse-bright);
+  --color-amber-trich: var(--aw-color-amber-trich);
+  --color-amber-bright: var(--aw-color-amber-bright);
+  --color-soil-light: var(--aw-color-soil-light);
+  --color-cream: var(--aw-color-cream);
+  --color-cream-dim: var(--aw-color-cream-dim);
+  --color-ink: var(--aw-color-ink);
+
   --color-default: var(--aw-color-text-default);
   --color-muted: var(--aw-color-text-muted);
 
