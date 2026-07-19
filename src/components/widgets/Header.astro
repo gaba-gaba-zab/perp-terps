@@ -48,29 +48,26 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 
 <header
   id={id}
-  class:list={['group sticky top-0 z-40 w-full bg-page', { dark: isDark }]}
+  class:list={['group sticky top-0 z-40 w-full bg-banner', { dark: isDark }]}
   {...isSticky ? { 'data-aw-sticky-header': true } : {}}
 >
-  <div class="absolute inset-0 overflow-hidden">
-    <Image
-      src={bannerImg}
-      alt={SITE?.name ?? 'Perpetual Terpsters'}
-      class="w-full h-full object-cover md:object-contain"
-      widths={[400, 800, 1200, 1920]}
-      sizes="100vw"
-    />
-  </div>
-
   <div
     class:list={[
-      'relative h-32 md:h-40 group-[.scroll]:h-16 md:group-[.scroll]:h-16 transition-[height] duration-300 ease-in-out flex justify-between items-center px-4 md:px-6',
+      'relative h-56 md:h-72 group-[.scroll]:h-20 md:group-[.scroll]:h-20 transition-[height] duration-300 ease-in-out flex justify-between items-center px-4 md:px-6 gap-4',
     ]}
   >
-    <div class="flex items-center">
+    <div class="flex items-center gap-4 min-w-0">
+      <Image
+        src={bannerImg}
+        alt={SITE?.name ?? 'Perpetual Terpsters'}
+        class="h-full w-auto max-w-[60vw] object-contain"
+        widths={[400, 800, 1200]}
+        sizes="60vw"
+      />
       <ToggleMenu />
     </div>
 
-    <div data-aw-header-actions class="flex items-center gap-3">
+    <div data-aw-header-actions class="flex items-center gap-3 shrink-0">
       <div class="flex">
         {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5" />}
         {

@@ -27,13 +27,14 @@
 - **Site purpose:** content + services hybrid — educational grow content to
   drive traffic (blog/guides) plus a services/consulting offering that converts
   via the contact form. Blog deferred to Phase 3.5 (see *Next actions*).
-- **Phase:** 3 — **MVP customization shipped, header reworked to a
-  banner-background design with slide-in nav.** All template placeholder copy
-  replaced with brand copy; theme tokens wired to an earthy-green palette
-  extracted from the client's banner art; header is a sticky full-bleed
-  banner-image background with overlaid chrome (hamburger left, theme+CTA
-  right) and a slide-in nav panel from the left (see *Banner-background
-  header* below); favicons use the brand mark. Open review items below.
+- **Phase:** 3 — **MVP customization shipped, header reworked to banner-left
+  layout with matched bg.** All template placeholder copy replaced with brand
+  copy; theme tokens wired to an earthy-green palette extracted from the
+  client's banner art; header is a sticky strip with the full banner as a
+  positioned image element to the left of the hamburger, header bg color
+  matched to the banner's baked-in flat-bg for a seamless blend, nav in a
+  slide-in panel from the left (see *Banner-left header* below); favicons
+  use the brand mark. Open review items below.
 - **Stack:** Astro v6 + Tailwind v4, pnpm, Netlify deploy. Dev environment
   (devcontainer + OpenCode + GLM-5.2) is inherited as-is from the template —
   see `.devcontainer/` and the upstream template's handoff for env details.
@@ -93,87 +94,131 @@
   `Cannot find module` error in `Logo.astro`). Kept template `default.png`
   as OG image (Tier 3 Option A).
 
-### Banner-background header (2026-07-19, supersedes prior banner-row design)
+### Banner-left header with matched bg (2026-07-19, supersedes banner-bg design)
 
-Operator directive (2026-07-18): **break the template's layout rules for
-photo/brand assets** — brand imagery is no longer constrained to template
-defaults, even when that means reflowing header chrome, escaping the template
-grid, or exceeding the default header height. This philosophy applies going
-forward to all photo assets.
+Operator iterations on the banner placement within the 2026-07-19 session:
 
-Initial response was a stacked banner-row + 2-col nav (commit `cb2e7f7`,
-2026-07-18 — see session log). Operator iterated: "I want the banner as
-**background** to navigation. Banner should be the **full width of the
-viewport**. Collapsible hamburger menu to the **left** replaces current nav
-items." Redesigned accordingly.
+1. Banner as separate row above nav (commit `cb2e7f7`) — superseded.
+2. Banner as full-bleed background behind chrome (commit `6703ad7`) —
+   superseded.
+3. Banner as full-bleed bg with `object-cover` everywhere — superseded.
+4. **Current:** banner as positioned image element on the LEFT of the
+   hamburger, header bg color matched to the banner's baked-in flat-bg so
+   the surrounding chrome space blends seamlessly.
+
+Operator directive (carried from 2026-07-18): **break the template's layout
+rules for photo/brand assets** — brand imagery is no longer constrained to
+template defaults, even when that means reflowing header chrome, escaping
+the template grid, or exceeding the default header height. This philosophy
+applies going forward to all photo assets.
 
 **Current header design** (`src/components/widgets/Header.astro`):
 
-Single sticky `<header class="group sticky top-0 z-40 w-full bg-page">`
-containing four layers:
+Single sticky `<header class="group sticky top-0 z-40 w-full bg-banner">`
+containing three layers:
 
-1. **Banner background** (absolute inset-0): full-bleed `<Image>` of
-   `perpterps_banner.png` with `object-cover md:object-contain` (cover on
-   mobile, contain on desktop — preserves wordmark on desktop, fills the
-   strip on mobile). `widths={[400, 800, 1200, 1920]}` + `sizes="100vw"`
-   drives a responsive `srcset` (3 webp variants emitted: 23/75/112 KB).
-   `alt={SITE.name}` for screen-reader continuity.
-2. **Overlay chrome** (relative): `h-32 md:h-40 group-[.scroll]:h-16`
-   transition — full height (128/160px) at top of page, collapses to 64px
+1. **Chrome row** (relative): `h-56 md:h-72 group-[.scroll]:h-20 transition-
+   [height]` — tall header (224/288px) at top of page, collapses to 80px
    after scrolling 60px (existing scroll-tracking JS in `BasicScripts.astro`
    adds `.scroll` to `#header`). Edge-to-edge `flex justify-between` with
-   hamburger left + theme toggle/CTA right.
-3. **Slide-in nav panel** (fixed): `fixed inset-y-0 left-0 w-80 max-w-[85vw]
-   bg-page shadow-2xl -translate-x-full transition-transform duration-300
-   group-[.expanded]:translate-x-0 z-50`. Renders the 3 nav links (About /
-   Services / Contact) as a vertical list. Off-canvas by default at **all**
-   breakpoints — desktop no longer shows inline nav items.
-4. **Scrim** (fixed): `fixed inset-0 bg-black/50 opacity-0 pointer-events-none
-   transition-opacity duration-300 group-[.expanded]:opacity-100
-   group-[.expanded]:pointer-events-auto z-40`. Tap-to-dismiss.
+   two clusters:
+   - **Left cluster** (`flex items-center gap-4 min-w-0`): banner `<Image>`
+     + hamburger. Banner uses `h-full w-auto max-w-[60vw] object-contain`
+     — fills header height while capping at 60% of viewport width;
+     `object-contain` preserves the full banner with no cropping.
+     Responsive `srcset` widths `[400, 800, 1200]`, `sizes="60vw"` (3 webp
+     variants emitted). `alt={SITE.name}` for screen-reader continuity.
+   - **Right cluster** (`flex items-center gap-3 shrink-0`): theme toggle
+     + CTA. `shrink-0` so they don't get squeezed by the banner.
+2. **Slide-in nav panel** (fixed): unchanged from prior iteration —
+   `fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-page shadow-2xl
+   -translate-x-full transition-transform duration-300
+   group-[.expanded]:translate-x-0 z-50`. Vertical list of 3 nav links.
+   Off-canvas by default at all breakpoints — desktop no longer shows
+   inline nav items.
+3. **Scrim** (fixed): unchanged — `fixed inset-0 bg-black/50 opacity-0
+   pointer-events-none transition-opacity duration-300
+   group-[.expanded]:opacity-100 group-[.expanded]:pointer-events-auto
+   z-40`. Tap-to-dismiss.
 
-**`BasicScripts.astro` JS rewrite** — replaced the legacy mobile-menu
-handlers (close-on-nav-click, hamburger-toggle, resize-close, pageshow-reset)
-with a unified `closeMenu`/`toggleMenu` pair. Removed: `h-screen` /
-`bg-page` toggling on `#header` (was for the old full-screen-takeover
-pattern), `data-aw-header-actions` `.hidden` toggle (actions stay visible
-now), `#header nav` `.hidden` toggle (panel uses CSS transform instead).
-Added: scrim-click handler, escape-key handler. Verified in emitted JS: zero
-`h-screen` references, zero `data-aw-header-actions` references in the
-script, all four new handlers (`#header nav` click, `[data-aw-toggle-menu]`
-click, `[data-aw-menu-scrim]` click, document `keydown` Escape) wired.
+**Header bg color match** (`src/components/CustomStyles.astro` +
+`src/assets/styles/tailwind.css`): added `--aw-color-banner-bg:
+rgb(40 74 31)` to both `:root` and `.dark` blocks (same value in each —
+the banner PNG is theme-invariant so the matched bg is too). Value
+sampled from the banner PNG's flat-bg regions (top + bottom + left +
+right edges averaged via a Node+ImageMagick script, excluding the art
+band in the middle ~80% of the canvas). New `bg-banner` Tailwind utility
+added in `tailwind.css` via `@utility bg-banner { background-color:
+var(--aw-color-banner-bg); }`. `<header>` carries `bg-banner` instead of
+the prior `bg-page`.
 
-**`about.md`** — reverted the `{width=320}` cap on the vertical PNG under
-the new photo-asset directive. Image is now unconstrained.
+**Removed template-era CSS rules** (`tailwind.css`):
 
-**Carry-over preserved from `cb2e7f7`:** the `data-aw-header-actions`
-attribute on the actions div is kept (vestigial now but harmless; future
-selector anchor if needed). `Logo.astro` is now unreferenced from Header
-(file left in place; can be deleted in a future cleanup pass).
+- `#header.scroll > div:first-child` — was re-applying `bg-page` +
+  `md:bg-white/90` + `md:backdrop-blur-md` to the first child of `#header`
+  on scroll (template's floating-toolbar effect on collapsed sticky
+  header). With banner-as-positioned-element there's no absolute bg
+  layer to tint; the rule was a noop on the new layout but conflicted
+  philosophically. Replaced with a simple shadow on `#header.scroll` for
+  depth.
+- `#header.expanded nav` — was forcing `position: fixed; top: 70px;
+  left: 0; right: 0; bottom: 70px !important;` on the nav (legacy
+  mobile-takeover pattern from upstream). Conflicted with the slide-in
+  panel's own `fixed inset-y-0 left-0 w-80 max-w-[85vw]` positioning
+  (the `!important` on `bottom` would have overridden `inset-y-0`).
+  Removed entirely.
 
-**Operator decisions logged (2026-07-19):**
+**Banner placement rationale:**
 
-- Sticky with **collapse-on-scroll** (`h-32 md:h-40` → `h-16` after 60px).
-- Menu pattern: **slide-in panel from left** (replaces inline nav at all
-  breakpoints). Note this is unconventional for desktop consulting sites —
-  discoverability of About/Services/Contact now depends on the user tapping
-  the hamburger. Worth visual review.
-- **Hybrid cropping**: cover mobile / contain desktop.
-- **Edge-to-edge chrome**: hamburger + CTA pinned to viewport edges (no
-  `max-w-7xl` inner cap on the chrome; banner is full-bleed).
-- **Scrim + outside-click + Escape** dismiss.
-- About-image `{width=320}` cap **bundled-reverted** under the new photo-
-  asset philosophy.
+- Full banner art always visible at every breakpoint (`object-contain`,
+  no cropping).
+- Banner width adapts to header height (taller = wider), capped at
+  `60vw` so it doesn't dominate.
+- Banner-bg color in the empty chrome space matches the banner's own
+  baked-in bg → seamless blend between image and header strip.
+- Hamburger immediately right of the banner — clear hierarchy: brand
+  first, then menu affordance.
 
-**Verification:** `pnpm build` green (2 pages, 5 images optimized — banner
-now emits 3 responsive webp variants). `pnpm check:eslint` clean.
-`pnpm check:prettier` clean on touched files (3 pre-existing warnings on
-untouched files remain). `pnpm check:astro` reports only the pre-existing
-`astro.config.ts:27` error. Rendered HTML spot-checked: header has `group`
-class for state variants, banner `<img>` has full `srcset` + `object-cover
-md:object-contain` classes, slide-in `<nav data-aw-slide-menu>` with
-`-translate-x-full group-[.expanded]:translate-x-0`, scrim `<div
-data-aw-menu-scrim>` present, hamburger `data-aw-toggle-menu` on left.
+**`BasicScripts.astro` JS** (unchanged from prior 2026-07-19 entry) —
+unified `closeMenu`/`toggleMenu` pair + scrim-click + Escape-key
+handlers. Verified in emitted JS: zero `h-screen` references, zero
+`data-aw-header-actions` references in script, all four handlers wired.
+
+**Carry-over preserved from `cb2e7f7` / `6703ad7`:** the
+`data-aw-header-actions` attribute on the actions div is kept (vestigial
+now but harmless; future selector anchor if needed). `Logo.astro` is
+unreferenced from Header (file left in place; can be deleted in a future
+cleanup pass). `about.md` `{width=320}` cap reverted under the photo-
+asset directive (commit `6703ad7`).
+
+**Operator decisions logged (2026-07-19 iterations):**
+
+- Sticky with **collapse-on-scroll**: `h-56 md:h-72` → `h-20` (raised
+  from the prior `h-16` because at 64px the contained banner rendered at
+  ~138px wide — unreadable; 80px gives ~173px which is at least
+  legible).
+- **Banner LEFT of hamburger** (vs full-bleed background).
+- **`object-contain`** (retain full banner, no cropping at any
+  breakpoint).
+- **Header bg color = banner's baked-in flat-bg color** (`#284a1f`,
+  sampled from the source PNG's flat regions).
+- **Banner width capped at `60vw`** to leave room for hamburger +
+  actions.
+- Slide-in panel + scrim + outside-click + Escape dismiss (unchanged
+  from prior iteration).
+- **Removed two template-era CSS rules** that conflicted with the new
+  design (see above).
+
+**Verification:** `pnpm build` green (2 pages, banner emits 3 responsive
+webp variants). `pnpm check:eslint` clean. `pnpm check:prettier` clean
+on touched files. `pnpm check:astro` reports only the pre-existing
+`astro.config.ts:27` error. Rendered HTML spot-checked: `<header
+class="group bg-banner sticky top-0 w-full z-40">`, single chrome row
+with banner `<img class="h-full max-w-[60vw] object-contain w-auto">`
+positioned LEFT of the hamburger button, slide-in `<nav
+data-aw-slide-menu>` + scrim `<div data-aw-menu-scrim>` intact.
+Compiled CSS confirms `#header.scroll` is now shadow-only and
+`#header.expanded nav` rule is gone.
 
 ### Pre-existing issues surfaced (not caused by this session)
 
@@ -196,21 +241,22 @@ data-aw-menu-scrim>` present, hamburger `data-aw-toggle-menu` on left.
 
 - [ ] **Visual review of rendered site** — `pnpm dev` and walk through every
       section. Especially:
-  - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-19:** banner is now the
-    background of the sticky header (full-bleed, hybrid cover/contain),
-    chrome overlaid edge-to-edge, nav in a slide-in panel from the left.
-    See *Banner-background header*. **Still review:**
-    - Does the 128/160px header height + collapse to 64px on scroll feel
-      right? Want it taller/shorter/different collapse threshold?
-    - Desktop nav is **hidden by default** behind the hamburger (your call).
-      Tap-through to confirm discoverability feels OK; easy to revert to
-      inline desktop nav if it's too hidden.
-    - On desktop (`object-contain`), the banner art is centered with
-      transparent margins showing the `bg-page` color on the sides. OK with
-      that, or want a different bg treatment behind the banner?
-    - On mobile (`object-cover`), banner is cropped to fill. Verify the
-      wordmark isn't getting clipped in a bad spot.
-  - About-section vertical PNG — `{width=320}` cap reverted this session;
+  - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-19:** banner is now a
+    positioned image element to the LEFT of the hamburger, `object-contain`
+    so the full art is always visible, header bg color matched to the
+    banner's baked-in flat-bg (`#284a1f`). See *Banner-left header*.
+    **Still review:**
+    - Header height: `h-56 md:h-72` (224/288px), collapses to `h-20` (80px)
+      on scroll. Want it taller/shorter/different collapse threshold?
+    - Banner width cap: `max-w-[60vw]`. Want it wider/narrower?
+    - Banner-bg color match: sampled `#284a1f` is the *average* of the
+      banner's flat-bg regions. The banner has a subtle gradient (top
+      lighter, bottom darker). Want a gradient bg instead of flat color
+      for a more seamless blend?
+    - Desktop nav is **hidden by default** behind the hamburger (your
+      call). Tap-through to confirm discoverability feels OK; easy to
+      revert to inline desktop nav if it's too hidden.
+  - About-section vertical PNG — `{width=320}` cap reverted 2026-07-19;
     image is now unconstrained. Verify it doesn't dominate the section.
   - Dark mode contrast on the new green palette (primary is dark forest on
     light bg; secondary is lighter on dark bg).
@@ -284,11 +330,16 @@ backend only if generic-answer quality becomes the bottleneck.
   except contact" but I cannot OCR images in this env. Hero/about copy was
   drafted blind from the brief; operator needs to compare side-by-side and
   identify what to mirror/replace.
-- **Header bg treatment** — current is `bg-page` (theme-aware solid color)
-  behind the transparent parts of the banner PNG. On desktop with
-  `object-contain`, this means the banner art sits centered with `bg-page`
-  showing on both sides. Want a different treatment (gradient, primary
-  color, blurred copy of the banner, etc.)?
+- **Header bg match polish** — current is a single flat color `#284a1f`
+  (overall average of the banner's flat-bg regions). The banner PNG has a
+  subtle vertical gradient baked in (top `#25461e` lighter, bottom
+  `#1c3f1d` darker, plus a left-edge brighter spot `#496c26`). Want a
+  matched gradient on the header bg for a more seamless blend?
+- **Banner width cap tuning** — currently `max-w-[60vw]`. At 1920px
+  desktop, banner renders at `min(header_height × 2.16, 60vw)` = 622px
+  (height-constrained by h-72). At 375px mobile, banner is 225px wide
+  (60vw-constrained). Want a different cap (wider on desktop, narrower on
+  mobile, etc.)?
 - **Desktop nav discoverability** — nav is now hidden behind hamburger at all
   breakpoints. Unconventional for consulting sites. Worth visual review; can
   revert to inline desktop nav easily.
@@ -308,6 +359,110 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-19 — Header iterations: object-cover, then banner-left with matched bg
+
+**Context:** Two follow-up iterations on the banner-bg header shipped
+earlier on 2026-07-19 (commit `6703ad7`). Both uncommitted at start of
+this entry; will land as one commit.
+
+**Iteration 1 — `object-cover` everywhere (reverted by iteration 2):**
+Operator asked for the banner background to be "as wide as possible" and
+proposed SVG conversion. Investigation revealed: (a) no vector-tracing
+tooling in env (no `potrace`/`inkscape`/`autotrace`, no sudo to install);
+(b) the `potrace` npm package only does luminance-threshold silhouette
+tracing — loses all color, not acceptable for a multi-color brand banner;
+(c) the banner PNG has 100% opaque pixels (no transparency), killing
+alpha-based tracing paths; (d) SVG conversion is orthogonal to the width
+goal anyway (vector preserves source aspect). Operator chose the simple
+path: drop `md:object-contain` so banner uses `object-cover` at all
+breakpoints. Banner filled viewport width, cropping the flat-bg top/bottom
+margins (which contained no art). Committed locally as a one-line change.
+
+**Iteration 2 — banner-left with matched bg (current state):** Operator
+reversed direction: "Retain all of banner. Do not cut it off." Then:
+"change the height and show the full banner. Match the background color.
+Remove current background color." Then: "position banner to the left of
+the hamburger menu." All three directives combined into a single coherent
+redesign:
+
+- Banner moved out of the absolute background layer and into the chrome
+  row as a positioned `<Image>` element to the LEFT of the hamburger.
+- Switched back to `object-contain` (full banner visible, no cropping).
+- Header height bumped from `h-32 md:h-40` → `h-56 md:h-72` (224/288px)
+  to give the banner real presence.
+- Collapsed-on-scroll height raised from `h-16` (64px) → `h-20` (80px)
+  because at 64px the contained banner rendered at ~138px wide — too
+  small to read.
+- Banner width capped at `max-w-[60vw]` so it doesn't dominate the
+  viewport or starve the actions cluster.
+- Sampled banner's flat-bg color (#284a1f overall average of the four
+  edge regions) via a Node+ImageMagick script; added as new theme token
+  `--aw-color-banner-bg: rgb(40 74 31)` in `CustomStyles.astro` (same
+  value in `:root` and `.dark` — banner is theme-invariant, so the
+  matched bg is too). New `bg-banner` utility in `tailwind.css`.
+- Replaced `bg-page` on `<header>` with `bg-banner`.
+- Removed two template-era CSS rules in `tailwind.css` that conflicted:
+  - `#header.scroll > div:first-child` (re-applied `bg-page` + white/90
+    + backdrop-blur on scroll — template floating-toolbar effect,
+    irrelevant to new design). Replaced with simple shadow on
+    `#header.scroll` for depth.
+  - `#header.expanded nav` (forced full-screen-fixed nav positioning —
+    legacy mobile-takeover, conflicted with slide-in panel's own
+    `fixed inset-y-0 left-0` via the `bottom: 70px !important`
+    override).
+
+**Shipped (3 files):**
+
+- `src/components/CustomStyles.astro` — `--aw-color-banner-bg` token
+  added to `:root` and `.dark` (same value).
+- `src/assets/styles/tailwind.css` — `@utility bg-banner` added;
+  `#header.scroll` simplified to shadow-only; `#header.expanded nav`
+  rule removed.
+- `src/components/widgets/Header.astro` — absolute banner-bg layer
+  removed; `<Image>` moved into chrome row left of hamburger;
+  `bg-page` → `bg-banner`; height bumped; banner capped at `60vw`.
+
+**Operator decisions logged:**
+
+- Banner LEFT of hamburger (vs full-bleed background).
+- `object-contain` (retain full banner, no cropping).
+- Header bg = banner's baked-in flat-bg color (`#284a1f`).
+- Banner cap `max-w-[60vw]`.
+- Height `h-56 md:h-72`, collapse to `h-20`.
+- Removed template-era CSS rules.
+
+**Investigation artifacts (not committed):** banner composition analysis
+scripts in `/tmp/opencode/svg-test/` — corner samples (initial,
+misleading), then precise flat-bg region averaging (`bg-color.mjs`),
+then edge-density-by-band analysis (`edges.mjs`). Findings: banner is
+1024×474, 100% opaque, all art in middle ~80% of canvas (rows 78–390),
+flat-bg regions average `#284a1f` with a subtle gradient (top lighter,
+bottom darker). The initial single-pixel corner samples (`#B7C6BF`)
+were anomalous and misleading — band averaging revealed the true
+dark-forest-green bg.
+
+**Verification:** `pnpm build` green. `pnpm check:eslint` clean.
+`pnpm check:prettier` clean on touched files. `pnpm check:astro` reports
+only the pre-existing `astro.config.ts:27` error. Rendered HTML
+spot-checked: `<header class="group bg-banner sticky top-0 w-full
+z-40">`, banner `<img class="h-full max-w-[60vw] object-contain
+w-auto">` positioned left of hamburger, slide-in panel + scrim intact.
+Compiled CSS confirms `#header.scroll` is shadow-only and
+`#header.expanded nav` rule is gone.
+
+**Next-session priorities (in *Next actions* order):**
+
+1. Operator visual review in `pnpm dev` — banner-left layout, full
+   banner visibility, header bg match (flat vs gradient polish), banner
+   width cap, desktop nav discoverability.
+2. Optional: matched gradient bg instead of flat color (banner has a
+   subtle gradient — `linear-gradient(to bottom, #25461e, #1c3f1d)`).
+3. Outstanding Phase 3.5 items (blog, hero image support, vector
+   favicon).
+4. Pre-launch blockers (FB URL, domain registrar, OG image decision).
+5. Future cleanup: delete unreferenced `LandingLayout.astro` and
+   `Logo.astro`.
 
 ### 2026-07-19 — Banner-background header with slide-in nav
 
