@@ -53,21 +53,21 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 >
   <div
     class:list={[
-      'relative h-56 md:h-72 group-[.scroll]:h-20 md:group-[.scroll]:h-20 transition-[height] duration-300 ease-in-out flex justify-between items-center px-4 md:px-6 gap-4',
+      'relative h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:h-20 transition-[height] duration-300 ease-in-out flex justify-between items-center px-4 md:px-6 gap-4',
     ]}
   >
     <div class="flex items-center gap-4 min-w-0">
       <Image
         src={bannerImg}
         alt={SITE?.name ?? 'Perpetual Terpsters'}
-        class="h-full w-auto max-w-[60vw] object-contain"
+        class="h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:h-20 w-auto max-w-[60vw] object-contain"
         widths={[400, 800, 1200]}
         sizes="60vw"
       />
       <ToggleMenu />
     </div>
 
-    <div data-aw-header-actions class="flex items-center gap-3 shrink-0">
+    <div data-aw-header-actions class="hidden md:flex items-center gap-3 shrink-0">
       <div class="flex">
         {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5" />}
         {

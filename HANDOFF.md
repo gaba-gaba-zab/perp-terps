@@ -117,19 +117,28 @@ applies going forward to all photo assets.
 Single sticky `<header class="group sticky top-0 z-40 w-full bg-banner">`
 containing three layers:
 
-1. **Chrome row** (relative): `h-56 md:h-72 group-[.scroll]:h-20 transition-
-   [height]` — tall header (224/288px) at top of page, collapses to 80px
-   after scrolling 60px (existing scroll-tracking JS in `BasicScripts.astro`
-   adds `.scroll` to `#header`). Edge-to-edge `flex justify-between` with
+1. **Chrome row** (relative): `h-32 md:h-72 group-[.scroll]:h-16
+   md:group-[.scroll]:h-20 transition-[height]` — short header on mobile
+   (128px), tall on desktop (288px), collapses to 64/80px after scrolling
+   60px (existing scroll-tracking JS in `BasicScripts.astro` adds `.scroll`
+   to `#header`). Edge-to-edge `flex justify-between items-center` with
    two clusters:
    - **Left cluster** (`flex items-center gap-4 min-w-0`): banner `<Image>`
-     + hamburger. Banner uses `h-full w-auto max-w-[60vw] object-contain`
-     — fills header height while capping at 60% of viewport width;
-     `object-contain` preserves the full banner with no cropping.
-     Responsive `srcset` widths `[400, 800, 1200]`, `sizes="60vw"` (3 webp
-     variants emitted). `alt={SITE.name}` for screen-reader continuity.
-   - **Right cluster** (`flex items-center gap-3 shrink-0`): theme toggle
-     + CTA. `shrink-0` so they don't get squeezed by the banner.
+     + hamburger. Banner uses **explicit height classes matching the
+     header** (`h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:h-20
+     w-auto max-w-[60vw] object-contain`) — `h-full` was tried first but
+     is circular (parent is content-sized, browser falls back to image's
+     natural decoded size → banner overflows the header). Explicit `h-*`
+     classes guarantee the banner always matches the header height at
+     every breakpoint and collapse state. Responsive `srcset` widths
+     `[400, 800, 1200]`, `sizes="60vw"` (3 webp variants emitted).
+     `alt={SITE.name}` for screen-reader continuity.
+   - **Right cluster** (`hidden md:flex items-center gap-3 shrink-0`):
+     theme toggle + CTA. **Hidden on mobile** (doesn't fit alongside
+     banner + hamburger in a 375px viewport — was overlapping the banner
+     by 131px before the fix). Mobile users access nav via the hamburger
+     only; theme toggle and CTA are desktop-only for now. `shrink-0` so
+     they don't get squeezed by the banner.
 2. **Slide-in nav panel** (fixed): unchanged from prior iteration —
    `fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-page shadow-2xl
    -translate-x-full transition-transform duration-300
@@ -193,17 +202,22 @@ asset directive (commit `6703ad7`).
 
 **Operator decisions logged (2026-07-19 iterations):**
 
-- Sticky with **collapse-on-scroll**: `h-56 md:h-72` → `h-20` (raised
-  from the prior `h-16` because at 64px the contained banner rendered at
-  ~138px wide — unreadable; 80px gives ~173px which is at least
-  legible).
+- Sticky with **collapse-on-scroll**: `h-32 md:h-72` → `h-16 md:h-20`
+  (mobile collapses 128→64, desktop collapses 288→80). Mobile header
+  shrunk from prior `h-56` because 224px was too tall for a phone; banner
+  is correspondingly smaller on mobile.
 - **Banner LEFT of hamburger** (vs full-bleed background).
-- **`object-contain`** (retain full banner, no cropping at any
-  breakpoint).
-- **Header bg color = banner's baked-in flat-bg color** (`#284a1f`,
-  sampled from the source PNG's flat regions).
-- **Banner width capped at `60vw`** to leave room for hamburger +
-  actions.
+- **`object-contain`** (retain full banner, no cropping).
+- **Banner sized via explicit height classes** matching header at every
+  breakpoint + collapse state (`h-32 md:h-72 group-[.scroll]:h-16
+  md:group-[.scroll]:h-20 w-auto max-w-[60vw]`). Initial attempt used
+  `h-full` but that's circular sizing — browser falls back to image's
+  natural decoded size, overflowing the header.
+- **Actions cluster hidden on mobile** (`hidden md:flex`) — banner +
+  hamburger + theme + CTA couldn't fit in 375px viewport; was overlapping
+  by 131px. Theme toggle + CTA now desktop-only.
+- **Header bg color = banner's baked-in flat-bg color** (`#284a1f`).
+- **Banner width cap `max-w-[60vw]`** to leave room for hamburger + actions.
 - Slide-in panel + scrim + outside-click + Escape dismiss (unchanged
   from prior iteration).
 - **Removed two template-era CSS rules** that conflicted with the new
@@ -212,13 +226,16 @@ asset directive (commit `6703ad7`).
 **Verification:** `pnpm build` green (2 pages, banner emits 3 responsive
 webp variants). `pnpm check:eslint` clean. `pnpm check:prettier` clean
 on touched files. `pnpm check:astro` reports only the pre-existing
-`astro.config.ts:27` error. Rendered HTML spot-checked: `<header
-class="group bg-banner sticky top-0 w-full z-40">`, single chrome row
-with banner `<img class="h-full max-w-[60vw] object-contain w-auto">`
-positioned LEFT of the hamburger button, slide-in `<nav
-data-aw-slide-menu>` + scrim `<div data-aw-menu-scrim>` intact.
-Compiled CSS confirms `#header.scroll` is now shadow-only and
-`#header.expanded nav` rule is gone.
+`astro.config.ts:27` error. **Layout numerically verified via Playwright
+inspection** (since this model can't view images): on 1440×900 desktop,
+header is 1440×288, banner is 622×288 flush at (24, 0) with no overflow,
+hamburger 48×48 at (662, 120) vertically centered, actions 249×41 at
+(1167, 123); on 375×750 mobile, header is 375×128, banner 225×128 at
+(16, 0), hamburger 48×48 at (257, 40), actions hidden; after-scroll
+collapse shrinks banner to 173×80 properly. **Known aesthetic issue:**
+on desktop, banner (622) + hamburger (48) leaves ~457px of empty
+banner-bg between the left cluster and the right cluster — visually
+heavy, may still read as "off." Awaiting operator visual review.
 
 ### Pre-existing issues surfaced (not caused by this session)
 
@@ -246,13 +263,22 @@ Compiled CSS confirms `#header.scroll` is now shadow-only and
     so the full art is always visible, header bg color matched to the
     banner's baked-in flat-bg (`#284a1f`). See *Banner-left header*.
     **Still review:**
-    - Header height: `h-56 md:h-72` (224/288px), collapses to `h-20` (80px)
-      on scroll. Want it taller/shorter/different collapse threshold?
+    - Header height: `h-32 md:h-72` (128/288px), collapses to `h-16
+      md:h-20` (64/80px) on scroll. Want it taller/shorter/different
+      collapse threshold?
+    - **Empty middle on desktop**: banner (622) + hamburger (48) leaves
+      ~457px of empty banner-bg color before the actions cluster on the
+      right. Want chrome clustered closer together (`justify-start` or
+      `justify-center`), or accept the empty-middle as a "banner-led"
+      look?
     - Banner width cap: `max-w-[60vw]`. Want it wider/narrower?
     - Banner-bg color match: sampled `#284a1f` is the *average* of the
       banner's flat-bg regions. The banner has a subtle gradient (top
       lighter, bottom darker). Want a gradient bg instead of flat color
       for a more seamless blend?
+    - **Mobile**: theme toggle + CTA hidden (`hidden md:flex`). Mobile
+      users get banner + hamburger only. Want them moved into the
+      slide-in menu instead?
     - Desktop nav is **hidden by default** behind the hamburger (your
       call). Tap-through to confirm discoverability feels OK; easy to
       revert to inline desktop nav if it's too hidden.
@@ -359,6 +385,71 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-19 — Banner-left layout fixes (Playwright-inspected)
+
+**Context:** Operator flagged the banner-left layout (commit `1c1c20b`)
+"looks bad" and asked for inspection. Since this model can't view images,
+installed Playwright + chromium (later removed) to dump computed layout
+metrics and screenshot. Found three concrete bugs in the rendered output:
+
+1. **Banner overflowed the header by 112px vertically.** Root cause: the
+   banner `<Image>` used `h-full w-auto`, but `h-full` resolves against
+   the parent's height — and the parent (`<div class="flex items-center
+   gap-4 min-w-0">`) was itself content-sized, creating circular sizing.
+   Browser fell back to the image's natural decoded size (864×400 on
+   desktop), so the banner extended 56px above and below the 288px
+   header. After scroll-collapse, banner stayed at 400px while header
+   shrank to 80px — catastrophic overflow.
+2. **Mobile actions overlapped the banner by 131px.** At 375px viewport,
+   banner (225) + hamburger (24 squeezed) + gaps + padding + actions
+   (249) = 554px in a 375px row. `justify-between` pushed the right
+   cluster to overlap the left cluster.
+3. **Mobile hamburger squeezed to 24px wide** (default is 48px) because
+   the left cluster had `min-w-0` and flex was forcing shrinkage to
+   fit the actions.
+
+**Fix (1 file, `src/components/widgets/Header.astro`):**
+
+- Replaced banner `h-full` with **explicit height classes matching the
+  header** at every breakpoint + collapse state: `h-32 md:h-72
+  group-[.scroll]:h-16 md:group-[.scroll]:h-20 w-auto max-w-[60vw]
+  object-contain`. This guarantees the banner always matches the header
+  height regardless of parent sizing context.
+- Shrank the mobile header from `h-56` (224px) → `h-32` (128px) — 224px
+  was too tall for a phone. Desktop stays at `h-72` (288px).
+- Adjusted mobile collapse from `h-20` → `h-16` (64px), desktop collapse
+  stays `h-20` (80px).
+- Added `hidden md:flex` to the actions cluster so theme toggle + CTA
+  don't render on mobile (was overlapping). Mobile users get banner +
+  hamburger only; theme toggle + CTA are desktop-only for now.
+
+**Post-fix Playwright verification:**
+
+- Desktop 1440×900: header 1440×288, banner 622×288 flush at (24, 0),
+  hamburger 48×48 at (662, 120) centered, actions 249×41 at (1167, 123).
+  After-scroll: header 80, banner 173×80 — proper collapse.
+- Mobile 375×750: header 375×128, banner 225×128 at (16, 0), hamburger
+  48×48 at (257, 40), actions 0×0 (hidden). firstSectionTop: 128.
+
+**Known remaining aesthetic issue surfaced:** on desktop, banner (622) +
+hamburger (48) leaves ~457px of empty banner-bg between the left cluster
+and the right cluster. Heavy visually — flagged for operator review.
+Possible fixes if it reads as "still off": `justify-start` or
+`justify-center` instead of `justify-between` (clusters chrome together,
+trades the right-aligned actions convention); or restore inline desktop
+nav (fills the middle with nav links).
+
+**Investigation artifacts (not committed, in `/tmp/opencode/`):**
+Playwright inspection script (`inspect.mjs`), screenshots
+(`screenshot-desktop-1440.png`, `screenshot-mobile-375.png`,
+`screenshot-desktop-1440-scrolled.png`), banner-color sampling scripts
+(`bg-color.mjs`, `edges.mjs`). `playwright` devDep removed after use
+(follows the prior session's precedent with `potrace`).
+
+**Verification:** `pnpm build` green. `pnpm check:eslint` clean.
+`pnpm check:prettier` clean on touched files. `pnpm check:astro` reports
+only the pre-existing `astro.config.ts:27` error.
 
 ### 2026-07-19 — Header iterations: object-cover, then banner-left with matched bg
 
