@@ -1,13 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
-import Logo from '~/components/Logo.astro';
 import ToggleTheme from '~/components/common/ToggleTheme.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
 import Button from '~/components/ui/Button.astro';
 
-import { getHomePermalink } from '~/utils/permalinks';
 import { trimSlash, getAsset } from '~/utils/permalinks';
 import { SITE } from 'astrowind:config';
+import bannerImg from '~/assets/images/perpterps_banner.png';
 import type { CallToAction } from '~/types';
 
 interface Link {
@@ -39,132 +39,91 @@ const {
   actions = [],
   isSticky = false,
   isDark = false,
-  isFullWidth = false,
   showToggleTheme = false,
   showRssFeed = false,
-  position = 'center',
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 ---
 
 <header
-  class:list={[
-    { sticky: isSticky, relative: !isSticky, dark: isDark },
-    'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
-  ]}
+  id={id}
+  class:list={['group sticky top-0 z-40 w-full bg-page', { dark: isDark }]}
   {...isSticky ? { 'data-aw-sticky-header': true } : {}}
-  {...id ? { id } : {}}
 >
-  <div class="absolute inset-0"></div>
-
-  <div class="relative border-b border-gray-100/60 dark:border-gray-800/60">
-    <div
-      class:list={[
-        'mx-auto w-full px-4 md:px-6 py-2 flex items-center justify-center relative',
-        { 'max-w-7xl': !isFullWidth },
-      ]}
-    >
-      <a class="flex items-center" href={getHomePermalink()} aria-label={SITE?.name ?? 'Perpetual Terpsters'}>
-        <Logo />
-      </a>
-      <div class="flex items-center md:hidden absolute right-3 rtl:right-auto rtl:left-3">
-        <ToggleMenu />
-      </div>
-    </div>
+  <div class="absolute inset-0 overflow-hidden">
+    <Image
+      src={bannerImg}
+      alt={SITE?.name ?? 'Perpetual Terpsters'}
+      class="w-full h-full object-cover md:object-contain"
+      widths={[400, 800, 1200, 1920]}
+      sizes="100vw"
+    />
   </div>
 
   <div
     class:list={[
-      'relative text-default py-0 md:py-3 px-3 md:px-6 mx-auto w-full flex justify-between items-center',
-      { 'max-w-7xl': !isFullWidth },
+      'relative h-32 md:h-40 group-[.scroll]:h-16 md:group-[.scroll]:h-16 transition-[height] duration-300 ease-in-out flex justify-between items-center px-4 md:px-6',
     ]}
   >
-    <nav
-      class="items-center w-full md:w-auto hidden md:flex md:mx-5 text-default overflow-y-auto overflow-x-hidden md:overflow-visible"
-      aria-label="Main navigation"
-    >
-      <ul
-        class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium md:justify-center"
-      >
+    <div class="flex items-center">
+      <ToggleMenu />
+    </div>
+
+    <div data-aw-header-actions class="flex items-center gap-3">
+      <div class="flex">
+        {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5" />}
         {
-          links.map(({ text, href, links }) => (
-            <li class={links?.length ? 'dropdown' : ''}>
-              {links?.length ? (
-                <>
-                  <button
-                    type="button"
-                    class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap"
-                  >
-                    {text}{' '}
-                    <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
-                  </button>
-                  <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
-                    {links.map(({ text: text2, href: href2 }) => (
-                      <li>
-                        <a
-                          class:list={[
-                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
-                            { 'aw-link-active': href2 === currentPath },
-                          ]}
-                          href={href2}
-                        >
-                          {text2}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <a
-                  class:list={[
-                    'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
-                    { 'aw-link-active': href === currentPath },
-                  ]}
-                  href={href}
-                >
-                  {text}
-                </a>
-              )}
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-    <div
-      data-aw-header-actions
-      class:list={[
-        { 'ml-auto rtl:ml-0 rtl:mr-auto': position === 'left' },
-        'hidden md:self-center md:flex items-center md:mb-0 fixed w-full md:w-auto md:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 md:p-0 md:justify-self-end',
-      ]}
-    >
-      <div class="items-center flex justify-between w-full md:w-auto">
-        <div class="flex">
-          {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
-          {
-            showRssFeed && (
-              <a
-                class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-                aria-label="RSS Feed"
-                href={getAsset('/rss.xml')}
-              >
-                <Icon name="tabler:rss" class="w-5 h-5" />
-              </a>
-            )
-          }
-        </div>
-        {
-          actions?.length ? (
-            <span class="ml-4 rtl:ml-0 rtl:mr-4">
-              {actions.map((btnProps) => (
-                <Button {...btnProps} class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" />
-              ))}
-            </span>
-          ) : (
-            ''
+          showRssFeed && (
+            <a
+              class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+              aria-label="RSS Feed"
+              href={getAsset('/rss.xml')}
+            >
+              <Icon name="tabler:rss" class="w-5 h-5" />
+            </a>
           )
         }
       </div>
+      {
+        actions?.length ? (
+          <span class="ml-2 rtl:ml-0 rtl:mr-2">
+            {actions.map((btnProps) => (
+              <Button {...btnProps} class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" />
+            ))}
+          </span>
+        ) : null
+      }
     </div>
+  </div>
+
+  <nav
+    data-aw-slide-menu
+    aria-label="Main navigation"
+    class="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-page shadow-2xl -translate-x-full transition-transform duration-300 ease-in-out group-[.expanded]:translate-x-0 z-50 overflow-y-auto"
+  >
+    <ul class="flex flex-col p-6 gap-2 text-default">
+      {
+        links.map(({ text, href }) => (
+          <li>
+            <a
+              class:list={[
+                'block py-3 text-lg font-medium hover:text-link dark:hover:text-white',
+                { 'aw-link-active': href === currentPath },
+              ]}
+              href={href}
+            >
+              {text}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div
+    data-aw-menu-scrim
+    class="fixed inset-0 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300 group-[.expanded]:opacity-100 group-[.expanded]:pointer-events-auto z-40"
+  >
   </div>
 </header>

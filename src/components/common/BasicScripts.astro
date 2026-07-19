@@ -44,24 +44,24 @@ import { UI } from 'astrowind:config';
     let lastKnownScrollPosition = window.scrollY;
     let ticking = true;
 
-    attachEvent('#header nav', 'click', function () {
+    const closeMenu = function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
       document.body.classList.remove('overflow-hidden');
-      document.getElementById('header')?.classList.remove('h-screen');
       document.getElementById('header')?.classList.remove('expanded');
-      document.getElementById('header')?.classList.remove('bg-page');
-      document.querySelector('#header nav')?.classList.add('hidden');
-      document.querySelector('#header [data-aw-header-actions]')?.classList.add('hidden');
-    });
+    };
 
-    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
-      elem.classList.toggle('expanded');
-      document.body.classList.toggle('overflow-hidden');
-      document.getElementById('header')?.classList.toggle('h-screen');
-      document.getElementById('header')?.classList.toggle('expanded');
-      document.getElementById('header')?.classList.toggle('bg-page');
-      document.querySelector('#header nav')?.classList.toggle('hidden');
-      document.querySelector('#header [data-aw-header-actions]')?.classList.toggle('hidden');
+    const toggleMenu = function (_, elem) {
+      const isOpen = document.getElementById('header')?.classList.contains('expanded');
+      elem.classList.toggle('expanded', !isOpen);
+      document.body.classList.toggle('overflow-hidden', !isOpen);
+      document.getElementById('header')?.classList.toggle('expanded', !isOpen);
+    };
+
+    attachEvent('#header nav', 'click', closeMenu);
+    attachEvent('[data-aw-toggle-menu]', 'click', toggleMenu);
+    attachEvent('[data-aw-menu-scrim]', 'click', closeMenu);
+    attachEvent([document], 'keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
     });
 
     attachEvent('[data-aw-toggle-color-scheme]', 'click', function () {
@@ -112,11 +112,7 @@ import { UI } from 'astrowind:config';
     screenSize.addEventListener('change', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
       document.body.classList.remove('overflow-hidden');
-      document.getElementById('header')?.classList.remove('h-screen');
       document.getElementById('header')?.classList.remove('expanded');
-      document.getElementById('header')?.classList.remove('bg-page');
-      document.querySelector('#header nav')?.classList.add('hidden');
-      document.querySelector('#header [data-aw-header-actions]')?.classList.add('hidden');
     });
 
     function applyHeaderStylesOnScroll() {
@@ -144,14 +140,9 @@ import { UI } from 'astrowind:config';
   };
   const onPageShow = function () {
     document.documentElement.classList.add('motion-safe:scroll-smooth');
-    const elem = document.querySelector('[data-aw-toggle-menu]');
-    if (elem) {
-      elem.classList.remove('expanded');
-    }
+    document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
     document.body.classList.remove('overflow-hidden');
-    document.getElementById('header')?.classList.remove('h-screen');
     document.getElementById('header')?.classList.remove('expanded');
-    document.querySelector('#header nav')?.classList.add('hidden');
   };
 
   window.onload = onLoad;

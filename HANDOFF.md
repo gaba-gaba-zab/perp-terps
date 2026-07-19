@@ -27,12 +27,13 @@
 - **Site purpose:** content + services hybrid — educational grow content to
   drive traffic (blog/guides) plus a services/consulting offering that converts
   via the contact form. Blog deferred to Phase 3.5 (see *Next actions*).
-- **Phase:** 3 — **MVP customization shipped, with banner-row header
-  restructure follow-up.** All template placeholder copy has been replaced
-  with brand copy; theme tokens are wired to an earthy-green palette extracted
-  from the client's banner art; header is a full-width brand bar above a
-  2-col nav row (see *Banner row restructure* below); favicons use the brand
-  mark. Open review items below.
+- **Phase:** 3 — **MVP customization shipped, header reworked to a
+  banner-background design with slide-in nav.** All template placeholder copy
+  replaced with brand copy; theme tokens wired to an earthy-green palette
+  extracted from the client's banner art; header is a sticky full-bleed
+  banner-image background with overlaid chrome (hamburger left, theme+CTA
+  right) and a slide-in nav panel from the left (see *Banner-background
+  header* below); favicons use the brand mark. Open review items below.
 - **Stack:** Astro v6 + Tailwind v4, pnpm, Netlify deploy. Dev environment
   (devcontainer + OpenCode + GLM-5.2) is inherited as-is from the template —
   see `.devcontainer/` and the upstream template's handoff for env details.
@@ -92,6 +93,88 @@
   `Cannot find module` error in `Logo.astro`). Kept template `default.png`
   as OG image (Tier 3 Option A).
 
+### Banner-background header (2026-07-19, supersedes prior banner-row design)
+
+Operator directive (2026-07-18): **break the template's layout rules for
+photo/brand assets** — brand imagery is no longer constrained to template
+defaults, even when that means reflowing header chrome, escaping the template
+grid, or exceeding the default header height. This philosophy applies going
+forward to all photo assets.
+
+Initial response was a stacked banner-row + 2-col nav (commit `cb2e7f7`,
+2026-07-18 — see session log). Operator iterated: "I want the banner as
+**background** to navigation. Banner should be the **full width of the
+viewport**. Collapsible hamburger menu to the **left** replaces current nav
+items." Redesigned accordingly.
+
+**Current header design** (`src/components/widgets/Header.astro`):
+
+Single sticky `<header class="group sticky top-0 z-40 w-full bg-page">`
+containing four layers:
+
+1. **Banner background** (absolute inset-0): full-bleed `<Image>` of
+   `perpterps_banner.png` with `object-cover md:object-contain` (cover on
+   mobile, contain on desktop — preserves wordmark on desktop, fills the
+   strip on mobile). `widths={[400, 800, 1200, 1920]}` + `sizes="100vw"`
+   drives a responsive `srcset` (3 webp variants emitted: 23/75/112 KB).
+   `alt={SITE.name}` for screen-reader continuity.
+2. **Overlay chrome** (relative): `h-32 md:h-40 group-[.scroll]:h-16`
+   transition — full height (128/160px) at top of page, collapses to 64px
+   after scrolling 60px (existing scroll-tracking JS in `BasicScripts.astro`
+   adds `.scroll` to `#header`). Edge-to-edge `flex justify-between` with
+   hamburger left + theme toggle/CTA right.
+3. **Slide-in nav panel** (fixed): `fixed inset-y-0 left-0 w-80 max-w-[85vw]
+   bg-page shadow-2xl -translate-x-full transition-transform duration-300
+   group-[.expanded]:translate-x-0 z-50`. Renders the 3 nav links (About /
+   Services / Contact) as a vertical list. Off-canvas by default at **all**
+   breakpoints — desktop no longer shows inline nav items.
+4. **Scrim** (fixed): `fixed inset-0 bg-black/50 opacity-0 pointer-events-none
+   transition-opacity duration-300 group-[.expanded]:opacity-100
+   group-[.expanded]:pointer-events-auto z-40`. Tap-to-dismiss.
+
+**`BasicScripts.astro` JS rewrite** — replaced the legacy mobile-menu
+handlers (close-on-nav-click, hamburger-toggle, resize-close, pageshow-reset)
+with a unified `closeMenu`/`toggleMenu` pair. Removed: `h-screen` /
+`bg-page` toggling on `#header` (was for the old full-screen-takeover
+pattern), `data-aw-header-actions` `.hidden` toggle (actions stay visible
+now), `#header nav` `.hidden` toggle (panel uses CSS transform instead).
+Added: scrim-click handler, escape-key handler. Verified in emitted JS: zero
+`h-screen` references, zero `data-aw-header-actions` references in the
+script, all four new handlers (`#header nav` click, `[data-aw-toggle-menu]`
+click, `[data-aw-menu-scrim]` click, document `keydown` Escape) wired.
+
+**`about.md`** — reverted the `{width=320}` cap on the vertical PNG under
+the new photo-asset directive. Image is now unconstrained.
+
+**Carry-over preserved from `cb2e7f7`:** the `data-aw-header-actions`
+attribute on the actions div is kept (vestigial now but harmless; future
+selector anchor if needed). `Logo.astro` is now unreferenced from Header
+(file left in place; can be deleted in a future cleanup pass).
+
+**Operator decisions logged (2026-07-19):**
+
+- Sticky with **collapse-on-scroll** (`h-32 md:h-40` → `h-16` after 60px).
+- Menu pattern: **slide-in panel from left** (replaces inline nav at all
+  breakpoints). Note this is unconventional for desktop consulting sites —
+  discoverability of About/Services/Contact now depends on the user tapping
+  the hamburger. Worth visual review.
+- **Hybrid cropping**: cover mobile / contain desktop.
+- **Edge-to-edge chrome**: hamburger + CTA pinned to viewport edges (no
+  `max-w-7xl` inner cap on the chrome; banner is full-bleed).
+- **Scrim + outside-click + Escape** dismiss.
+- About-image `{width=320}` cap **bundled-reverted** under the new photo-
+  asset philosophy.
+
+**Verification:** `pnpm build` green (2 pages, 5 images optimized — banner
+now emits 3 responsive webp variants). `pnpm check:eslint` clean.
+`pnpm check:prettier` clean on touched files (3 pre-existing warnings on
+untouched files remain). `pnpm check:astro` reports only the pre-existing
+`astro.config.ts:27` error. Rendered HTML spot-checked: header has `group`
+class for state variants, banner `<img>` has full `srcset` + `object-cover
+md:object-contain` classes, slide-in `<nav data-aw-slide-menu>` with
+`-translate-x-full group-[.expanded]:translate-x-0`, scrim `<div
+data-aw-menu-scrim>` present, hamburger `data-aw-toggle-menu` on left.
+
 ### Pre-existing issues surfaced (not caused by this session)
 
 - **`pnpm check` fails on `astro.config.ts:27`** — TS complains `'preview'
@@ -100,49 +183,10 @@
   commit `3079e63`. House rule #5 forbids editing `astro.config.ts` without
   asking. **Runtime is unaffected** — Astro accepts the key; `pnpm build` is
   green. Surfaced for operator decision.
-
-### Banner row restructure (2026-07-18 follow-up)
-
-Operator flagged the header logo was "too small" — the original `h-10`/`h-12`
-(40–48px) treatment inherited `default.png`'s template sizing. Directive
-received: **break the template's layout rules for photo/brand assets** —
-brand imagery is no longer constrained to template defaults, even when that
-means reflowing header chrome, escaping the template grid, or exceeding the
-default header height. This philosophy applies going forward to all photo
-assets (e.g. the about-section `{width=320}` cap I added last session is
-wrong-headed under this directive — revert pending operator decision).
-
-What changed:
-
-- `Header.astro` split into two stacked rows inside `<header>`: a full-width
-  centered banner row (border-bottom separator, `py-2`) and a 2-col flex nav
-  row `[nav | actions]` (`py-0 md:py-3` so it collapses to 0-height on mobile
-  when the menu is closed). Whole header still sticks on scroll.
-- `Logo.astro` bumped `h-10` → `h-20 md:h-28` (80 / 112px). `w-auto` preserves
-  aspect; transparent PNG sits cleanly on any bg.
-- Mobile hamburger moved into the banner row (top-right absolute) — on mobile
-  the nav row is empty/hidden by default; tapping the hamburger toggles
-  `<nav>` and the actions div via the existing JS in `BasicScripts.astro`.
-- `BasicScripts.astro` selector `#header > div > div:last-child` →
-  `#header [data-aw-header-actions]` (3 occurrences). The positional selector
-  broke under the new two-row DOM; semantic attribute is structure-agnostic.
-  New `data-aw-header-actions` attribute added to the actions div in
-  `Header.astro`.
-- Asset-swap resilient: sizing is purely `h-*` cap + `w-auto`. Future banner
-  with different aspect auto-fits; no PNG-dims-magic-numbers anywhere.
-
-**Convention decision:** 2-col nav (nav-left + actions-right) — standard for
-consulting/marketing sites. Avoids the "missing logo" tell that an empty
-3-col col-1 would create once the banner moved to its own row.
-
-**Verification:** `pnpm build` green (2 pages, 3 brand images optimized).
-`pnpm check:eslint` clean. `pnpm check:prettier` clean on touched files
-(`Header.astro`, `Logo.astro`, `BasicScripts.astro` — 3 pre-existing
-warnings on untouched files remain). `pnpm check:astro` reports only the
-pre-existing `astro.config.ts:27` error (unchanged). Rendered HTML
-spot-checked: banner row, nav row, theme toggle, CTA, and both
-`data-aw-toggle-menu` / `data-aw-header-actions` hooks present in the right
-DOM positions for the mobile-menu JS.
+- **`LandingLayout.astro` is template cruft** — not imported anywhere in
+  `src/`, but still type-checked. Passes `position="right"` to `<Header>`
+  (kept in Header's Props interface as optional/no-op for this reason).
+  Safe to delete in a future cleanup pass; left alone here to minimize scope.
 
 ---
 
@@ -152,16 +196,22 @@ DOM positions for the mobile-menu JS.
 
 - [ ] **Visual review of rendered site** — `pnpm dev` and walk through every
       section. Especially:
-  - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-18:** banner-row
-    restructure shipped (see *Banner row restructure* under *Current state*).
-    Logo is now `h-20 md:h-28` in a full-width brand bar above a 2-col nav
-    row. **Still review:** does the banner row's `py-2` + 80/112px height feel
-    right on desktop and mobile? Want it taller/shorter? Want the banner row
-    sticky-collapsed on scroll?
-  - About-section vertical PNG — check it doesn't dominate the section.
-    (Operator directive received: photo assets should not be capped to
-    template-conservative sizes — the `{width=320}` cap I added last session
-    is likely wrong under the new philosophy. Decision pending.)
+  - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-19:** banner is now the
+    background of the sticky header (full-bleed, hybrid cover/contain),
+    chrome overlaid edge-to-edge, nav in a slide-in panel from the left.
+    See *Banner-background header*. **Still review:**
+    - Does the 128/160px header height + collapse to 64px on scroll feel
+      right? Want it taller/shorter/different collapse threshold?
+    - Desktop nav is **hidden by default** behind the hamburger (your call).
+      Tap-through to confirm discoverability feels OK; easy to revert to
+      inline desktop nav if it's too hidden.
+    - On desktop (`object-contain`), the banner art is centered with
+      transparent margins showing the `bg-page` color on the sides. OK with
+      that, or want a different bg treatment behind the banner?
+    - On mobile (`object-cover`), banner is cropped to fill. Verify the
+      wordmark isn't getting clipped in a bad spot.
+  - About-section vertical PNG — `{width=320}` cap reverted this session;
+    image is now unconstrained. Verify it doesn't dominate the section.
   - Dark mode contrast on the new green palette (primary is dark forest on
     light bg; secondary is lighter on dark bg).
 - [ ] **`perpterps_withcopy.png` copy review** — operator said "include all of
@@ -234,9 +284,14 @@ backend only if generic-answer quality becomes the bottleneck.
   except contact" but I cannot OCR images in this env. Hero/about copy was
   drafted blind from the brief; operator needs to compare side-by-side and
   identify what to mirror/replace.
-- **About-section `{width=320}` cap** — under the new photo-asset philosophy
-  (no template-style conservative sizing), should this be reverted? Operator
-  scoped it out of this pass but flagged for follow-up.
+- **Header bg treatment** — current is `bg-page` (theme-aware solid color)
+  behind the transparent parts of the banner PNG. On desktop with
+  `object-contain`, this means the banner art sits centered with `bg-page`
+  showing on both sides. Want a different treatment (gradient, primary
+  color, blurred copy of the banner, etc.)?
+- **Desktop nav discoverability** — nav is now hidden behind hamburger at all
+  breakpoints. Unconventional for consulting sites. Worth visual review; can
+  revert to inline desktop nav easily.
 - **Facebook URL** — exact profile URL still pending. Footer link is `#`.
 - **Domain registrar** — does the client own `perpterps.com`, or do we
   register it? Which registrar? (Launch blocker.)
@@ -253,6 +308,91 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-19 — Banner-background header with slide-in nav
+
+**Context:** Operator iterated on the banner-row design shipped 2026-07-18
+(commit `cb2e7f7`). New directive: "I want the banner as **background** to
+navigation. Banner should be the **full width of the viewport**.
+**Collapsible hamburger menu to the left** replaces current nav items
+(left)." Three structural shifts vs. the prior design: (1) banner moves from
+separate row above nav → background layer of a single header; (2) nav items
+move from inline-on-desktop → hamburger-toggled slide-in panel at all
+breakpoints; (3) banner image is full-bleed edge-to-edge.
+
+**Shipped (3 files):**
+
+- `src/components/widgets/Header.astro` — full rewrite. Single sticky
+  `<header class="group sticky top-0 z-40 w-full bg-page">` with four layers:
+  absolute `<Image>` background (full-bleed, `object-cover md:object-contain`,
+  responsive `srcset` with widths `[400, 800, 1200, 1920]`); relative overlay
+  chrome (`h-32 md:h-40 group-[.scroll]:h-16` for collapse-on-scroll,
+  edge-to-edge `[hamburger | theme+CTA]`); fixed slide-in nav panel
+  (`-translate-x-full group-[.expanded]:translate-x-0`, w-80 max-w-[85vw]);
+  fixed scrim (`bg-black/50 opacity-0 group-[.expanded]:opacity-100`).
+  Removed: `Logo.astro` import (banner is now the brand visual), `position`
+  and `isFullWidth` destructuring (vestigial under new design — kept in
+  Props interface for backward compat with the unused `LandingLayout.astro`).
+- `src/components/common/BasicScripts.astro` — replaced 3 legacy mobile-menu
+  handlers (close-on-nav-click, hamburger-toggle, resize-close) + the
+  pageshow reset with a unified `closeMenu`/`toggleMenu` pair. Added
+  scrim-click and Escape-key handlers. Removed `h-screen` / `bg-page` /
+  `[data-aw-header-actions]` / `#header nav .hidden` toggles (panel uses CSS
+  transform + group variants now).
+- `src/content/about.md` — reverted the `{width=320}` cap on the vertical
+  PNG under the photo-asset directive.
+
+**Caught during build:**
+
+- Initial pass dropped `position` + `isFullWidth` from the Props interface,
+  which broke typecheck on `LandingLayout.astro:30` (template cruft, unused
+  but still checked — it passes `position="right"`). Fix: restored both
+  props to the interface as optional, but don't destructure them.
+
+**Decisions logged:**
+
+- Sticky with collapse-on-scroll (`h-32 md:h-40` → `h-16` after 60px).
+- Slide-in panel from left, all breakpoints (desktop nav no longer inline).
+- Hybrid cropping: cover mobile / contain desktop.
+- Edge-to-edge chrome (no `max-w-7xl` inner cap on the chrome layer).
+- Scrim + outside-click + Escape dismiss.
+- Bundled about.md `{width=320}` revert in the same commit.
+
+**UX flag:** desktop nav hidden behind hamburger is unconventional for
+consulting/marketing sites (most show inline nav for discoverability).
+Operator explicitly chose this; easy to walk back if visual review flags it.
+
+**Verification:**
+
+- `pnpm build` — **GREEN.** 2 pages, 5 images optimized (banner emits 3
+  responsive webp variants: 23/75/112 KB at 400/800/1024 widths).
+- `pnpm check:astro` — **1 PRE-EXISTING ERROR** at `astro.config.ts:27`
+  (unchanged).
+- `pnpm check:eslint` — clean.
+- `pnpm check:prettier` — clean on touched files; 3 pre-existing warnings
+  on untouched files (`AGENTS.md`, `HANDOFF.md`, `ContactSection.astro`).
+- Spot-checked rendered `dist/index.html`: `<header class="group bg-page
+  sticky top-0 w-full z-40">`, banner `<img>` with full `srcset` and
+  `object-cover md:object-contain` classes, slide-in `<nav
+  data-aw-slide-menu>` with `-translate-x-full group-[.expanded]:translate-x-0`,
+  scrim `<div data-aw-menu-scrim>` present, hamburger `data-aw-toggle-menu`
+  on left.
+- Verified emitted JS: zero `h-screen` references, zero `data-aw-header-actions`
+  references in script, all 4 new handlers wired (`#header nav` click,
+  `[data-aw-toggle-menu]` click, `[data-aw-menu-scrim]` click, document
+  `keydown` Escape).
+
+**Next-session priorities (in *Next actions* order):**
+
+1. Operator visual review in `pnpm dev` — especially desktop nav
+   discoverability, the 128/160px height + collapse-on-scroll feel, and the
+   desktop `object-contain` treatment (transparent banner margins show
+   `bg-page` color on the sides).
+2. Header bg treatment decision — solid `bg-page` (current) vs. gradient /
+   primary color / blurred banner copy behind the transparent margins.
+3. Outstanding Phase 3.5 items (blog, hero image support, vector favicon).
+4. Pre-launch blockers (FB URL, domain registrar, OG image decision).
+5. Future cleanup: delete unreferenced `LandingLayout.astro` and `Logo.astro`.
 
 ### 2026-07-18 — Full-width banner row restructure
 

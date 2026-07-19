@@ -11,7 +11,7 @@ items:
     description: 'First-time grower or dialling in a perpetual setup — we meet you where you are, no judgement.'
 ---
 
-![Perpetual Terpsters brand mark](../assets/images/perpterps_vertical.png){width=320}
+![Perpetual Terpsters brand mark](../assets/images/perpterps_vertical.png)
 
 We're a small team of homegrow gardeners who believe everyone in New Jersey
 should be able to grow their own medicine confidently and well. Whether you're
