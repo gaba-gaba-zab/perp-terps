@@ -3,6 +3,11 @@ import { Icon } from 'astro-icon/components';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 interface FormInput {
   type?: string;
   name: string;
@@ -10,6 +15,8 @@ interface FormInput {
   autocomplete?: string;
   placeholder?: string;
   required?: boolean;
+  options?: string[];
+  fullSpan?: boolean;
 }
 
 type InputType =
@@ -41,6 +48,7 @@ interface FormTextarea {
   label?: string;
   placeholder?: string;
   rows?: number;
+  fullSpan?: boolean;
 }
 
 interface ContactMethod {
@@ -58,6 +66,7 @@ export interface Props {
   inputs?: FormInput[];
   textarea?: FormTextarea;
   button?: string;
+  disclaimer?: string;
   contactMethods?: ContactMethod[];
 }
 
@@ -69,11 +78,13 @@ const {
   inputs = [],
   textarea,
   button = 'Send',
+  disclaimer,
   contactMethods = [],
 } = Astro.props;
 
-const fieldClass =
-  'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900';
+const isSelect = (input: FormInput) => input.type === 'select' || (input.options?.length ?? 0) > 0;
+
+const toOption = (opt: string): SelectOption => ({ value: opt, label: opt });
 ---
 
 <WidgetWrapper id={id}>
@@ -93,9 +104,7 @@ const fieldClass =
               </span>
             )}
             <span class="min-w-0">
-              {method.label && (
-                <span class="block text-xs uppercase tracking-wide text-muted">{method.label}</span>
-              )}
+              {method.label && <span class="block text-xs uppercase tracking-wide text-muted">{method.label}</span>}
               <span class="block font-medium text-page truncate">{method.value}</span>
             </span>
           </a>
@@ -110,7 +119,7 @@ const fieldClass =
     data-netlify="true"
     netlify-honeypot="bot-field"
     action="/?submitted=true"
-    class="mx-auto max-w-xl rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6 md:p-8"
+    class="perpterps-form mx-auto mt-8 max-w-3xl grid md:grid-cols-2 gap-5 p-6 md:p-10 border-2"
   >
     <input type="hidden" name="form-name" value="contact" />
     <p class="hidden">
@@ -118,31 +127,43 @@ const fieldClass =
     </p>
 
     {
-      inputs.map((input) => (
-        <div class="mb-5">
-          {input.label && (
-            <label for={input.name} class="block text-sm font-medium mb-1">
-              {input.label}
-            </label>
-          )}
-          <input
-            type={input.type as InputType}
-            name={input.name}
-            id={input.name}
-            autocomplete={input.autocomplete}
-            placeholder={input.placeholder}
-            required={input.required}
-            class={fieldClass}
-          />
-        </div>
-      ))
+      inputs.map((input) => {
+        const colSpan = input.fullSpan ? 'md:col-span-2' : '';
+        return (
+          <div class={colSpan}>
+            {input.label && (
+              <label class="pf-label" for={input.name}>
+                {input.label}
+              </label>
+            )}
+            {isSelect(input) ? (
+              <select id={input.name} name={input.name} class="pf-select" required={input.required}>
+                {(input.options ?? []).map((opt) => {
+                  const o = toOption(opt);
+                  return <option value={o.value}>{o.label}</option>;
+                })}
+              </select>
+            ) : (
+              <input
+                type={(input.type as InputType) || 'text'}
+                name={input.name}
+                id={input.name}
+                autocomplete={input.autocomplete}
+                placeholder={input.placeholder}
+                required={input.required}
+                class="pf-input"
+              />
+            )}
+          </div>
+        );
+      })
     }
 
     {
       textarea && (
-        <div class="mb-5">
+        <div class={textarea.fullSpan === false ? '' : 'md:col-span-2'}>
           {textarea.label && (
-            <label for={textarea.name} class="block text-sm font-medium mb-1">
+            <label class="pf-label" for={textarea.name}>
               {textarea.label}
             </label>
           )}
@@ -151,14 +172,23 @@ const fieldClass =
             name={textarea.name}
             rows={textarea.rows ?? 4}
             placeholder={textarea.placeholder}
-            class={fieldClass}
+            class="pf-textarea"
           />
         </div>
       )
     }
 
-    <div class="mt-2">
-      <button type="submit" class="btn-primary w-full">{button}</button>
-    </div>
+    {
+      (disclaimer || button) && (
+        <div class="md:col-span-2 flex justify-between items-center flex-wrap gap-4 pt-2">
+          {disclaimer && <p class="text-xs max-w-xs text-cream-dim leading-relaxed">{disclaimer}</p>}
+          {button && (
+            <button type="submit" class="pf-cta">
+              {button}
+            </button>
+          )}
+        </div>
+      )
+    }
   </form>
 </WidgetWrapper>

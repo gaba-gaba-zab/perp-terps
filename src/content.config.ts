@@ -23,6 +23,8 @@ const inputSchema = z.object({
   autocomplete: z.string().optional(),
   placeholder: z.string().optional(),
   required: z.boolean().optional(),
+  options: z.array(z.string()).optional(),
+  fullSpan: z.boolean().optional(),
 });
 
 const linkSchema = z.object({
@@ -61,9 +63,11 @@ const sectionsCollection = defineCollection({
         label: z.string().optional(),
         placeholder: z.string().optional(),
         rows: z.number().optional(),
+        fullSpan: z.boolean().optional(),
       })
       .optional(),
     button: z.string().optional(),
+    disclaimer: z.string().optional(),
 
     links: z.array(z.object({ title: z.string(), links: z.array(linkSchema) })).optional(),
     secondaryLinks: z.array(linkSchema).optional(),
