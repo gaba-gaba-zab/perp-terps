@@ -1,11 +1,11 @@
 # HANDOFF — perp-terps (The Perpetual Terpsters)
 
 > Living doc. Each agent session: refresh **Current state** + **Next actions**,
-> then append a dated entry to **Session log**. See `AGENTS.md` → *Handoff
-> convention* for the full rule.
+> then append a dated entry to **Session log**. See `AGENTS.md` → _Handoff
+> convention_ for the full rule.
 
 > **New agent? Start here:** Read this whole file (it's short), then
-> `AGENTS.md` house rules. Most *Next actions* are gated on *Open questions*
+> `AGENTS.md` house rules. Most _Next actions_ are gated on _Open questions_
 > (client assets, copy, FB/IG URLs, contact info, domain registrar) — confirm
 > those answers before building, otherwise you'll be re-creating placeholder
 > content. If an answer is missing, surface it to the operator first instead
@@ -26,15 +26,18 @@
   - Target domain: **perpterps.com** (DNS/registrar still pending)
 - **Site purpose:** content + services hybrid — educational grow content to
   drive traffic (blog/guides) plus a services/consulting offering that converts
-  via the contact form. Blog deferred to Phase 3.5 (see *Next actions*).
+  via the contact form. Blog deferred to Phase 3.5 (see _Next actions_).
 - **Phase:** 3 — **MVP customization shipped, header reworked to banner-left
-  layout with matched bg.** All template placeholder copy replaced with brand
-  copy; theme tokens wired to an earthy-green palette extracted from the
-  client's banner art; header is a sticky strip with the full banner as a
-  positioned image element to the left of the hamburger, header bg color
-  matched to the banner's baked-in flat-bg for a seamless blend, nav in a
-  slide-in panel from the left (see *Banner-left header* below); favicons
-  use the brand mark. Open review items below.
+  layout with matched bg, brand palette refreshed to a curated 10-color
+  system, consult-form intake ported.** All template placeholder copy replaced
+  with brand copy; theme tokens wired to the new forest/moss/chartreuse/amber/
+  cream palette (sampled from operator-supplied inspiration); header is a
+  sticky strip with the full banner as a positioned image element to the left
+  of the hamburger, header bg color matched to the banner's baked-in flat-bg
+  for a seamless blend, nav in a slide-in panel from the left (see _Banner-left
+  header_ below); contact form is a 2-col-grid intake form scoped under
+  `.perpterps-form` (see _Brand palette + consult-form_ below); favicons use
+  the brand mark. Open review items below.
 - **Stack:** Astro v6 + Tailwind v4, pnpm, Netlify deploy. Dev environment
   (devcontainer + OpenCode + GLM-5.2) is inherited as-is from the template —
   see `.devcontainer/` and the upstream template's handoff for env details.
@@ -45,7 +48,7 @@
   template, description (NJ homegrow framing), OG site_name all swapped to
   Perpetual Terpsters. `site` block edit was approved by operator (house rule
   #5 exception). OG image still points at template `default.png` (deferred —
-  see *Open questions*).
+  see _Open questions_).
 - **Theme palette** (`src/components/CustomStyles.astro`): primary
   `#12351B` (deep forest), secondary `#3B5A21` (mid leaf), accent `#899C35`
   (olive) — sampled from the banner art via ImageMagick. Light + dark both
@@ -54,7 +57,7 @@
 - **Header logo** (`src/components/Logo.astro`): renders
   `perpterps_banner.png` via `astro:assets` at `h-20 md:h-28` (80 / 112px) in a
   full-width banner row above the nav. `SITE.name` kept as `sr-only` for
-  a11y/SEO. Old 🚀 emoji dropped. See *Banner row restructure* for the layout
+  a11y/SEO. Old 🚀 emoji dropped. See _Banner row restructure_ for the layout
   change and the new photo-asset sizing philosophy.
 - **Navigation** (`src/navigation.ts`): CTA text `Start a project` →
   `Free consultation`.
@@ -80,9 +83,9 @@
   fields unchanged (name/email/message) — `public/netlify-form.html`
   intentionally not touched.
 - **Footer** (`src/content/footer.md`): copyright `© 2026 The Perpetual
-  Terpsters Homegrow Gardening.`; 3 socials (FB placeholder `#`, IG
+Terpsters Homegrow Gardening.`; 3 socials (FB placeholder `#`, IG
   `instagram.com/perpterps`, YT `youtube.com/@ThePerpetualTerpsters`); phone
-  + email as `secondaryLinks`. Old Privacy/Terms placeholders dropped.
+  - email as `secondaryLinks`. Old Privacy/Terms placeholders dropped.
 - **Favicons** (`src/assets/favicons/`): generated from `perpterps_banner.png`
   via ImageMagick. `favicon.ico` (16+32), `apple-touch-icon.png` (180²),
   `favicon.svg` (PNG-in-SVG wrapper — potrace unavailable so no true vector).
@@ -118,7 +121,7 @@ Single sticky `<header class="group sticky top-0 z-40 w-full bg-banner">`
 containing three layers:
 
 1. **Chrome row** (relative): `h-32 md:h-72 group-[.scroll]:h-16
-   md:group-[.scroll]:h-20 transition-[height]` — short header on mobile
+md:group-[.scroll]:h-20 transition-[height]` — short header on mobile
    (128px), tall on desktop (288px), collapses to 64/80px after scrolling
    60px (existing scroll-tracking JS in `BasicScripts.astro` adds `.scroll`
    to `#header`). **`flex justify-start items-center gap-4 md:gap-8`** —
@@ -128,7 +131,7 @@ containing three layers:
    - **Banner + hamburger** (`flex items-center gap-4 min-w-0`): banner
      `<Image>` + hamburger. Banner uses **explicit height classes matching
      the header** (`h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:
-     h-20 w-auto max-w-[60vw] object-contain`) — `h-full` was tried first
+h-20 w-auto max-w-[60vw] object-contain`) — `h-full` was tried first
      but is circular (parent is content-sized, browser falls back to
      image's natural decoded size → banner overflows the header).
      Explicit `h-*` classes guarantee the banner always matches the
@@ -143,14 +146,14 @@ containing three layers:
      they don't get squeezed by the banner.
 2. **Slide-in nav panel** (fixed): unchanged from prior iteration —
    `fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-page shadow-2xl
-   -translate-x-full transition-transform duration-300
-   group-[.expanded]:translate-x-0 z-50`. Vertical list of 3 nav links.
+-translate-x-full transition-transform duration-300
+group-[.expanded]:translate-x-0 z-50`. Vertical list of 3 nav links.
    Off-canvas by default at all breakpoints — desktop no longer shows
    inline nav items.
 3. **Scrim** (fixed): unchanged — `fixed inset-0 bg-black/50 opacity-0
-   pointer-events-none transition-opacity duration-300
-   group-[.expanded]:opacity-100 group-[.expanded]:pointer-events-auto
-   z-40`. Tap-to-dismiss.
+pointer-events-none transition-opacity duration-300
+group-[.expanded]:opacity-100 group-[.expanded]:pointer-events-auto
+z-40`. Tap-to-dismiss.
 
 **Header bg color match** (`src/components/CustomStyles.astro` +
 `src/assets/styles/tailwind.css`): added `--aw-color-banner-bg:
@@ -173,7 +176,7 @@ the prior `bg-page`.
   philosophically. Replaced with a simple shadow on `#header.scroll` for
   depth.
 - `#header.expanded nav` — was forcing `position: fixed; top: 70px;
-  left: 0; right: 0; bottom: 70px !important;` on the nav (legacy
+left: 0; right: 0; bottom: 70px !important;` on the nav (legacy
   mobile-takeover pattern from upstream). Conflicted with the slide-in
   panel's own `fixed inset-y-0 left-0 w-80 max-w-[85vw]` positioning
   (the `!important` on `bottom` would have overridden `inset-y-0`).
@@ -212,7 +215,7 @@ asset directive (commit `6703ad7`).
 - **`object-contain`** (retain full banner, no cropping).
 - **Banner sized via explicit height classes** matching header at every
   breakpoint + collapse state (`h-32 md:h-72 group-[.scroll]:h-16
-  md:group-[.scroll]:h-20 w-auto max-w-[60vw]`). Initial attempt used
+md:group-[.scroll]:h-20 w-auto max-w-[60vw]`). Initial attempt used
   `h-full` but that's circular sizing — browser falls back to image's
   natural decoded size, overflowing the header.
 - **Actions cluster hidden on mobile** (`hidden md:flex`) — banner +
@@ -243,10 +246,143 @@ desktop layout is `[banner (622) | gap (16) | hamburger (48) | gap (32)
 | actions (249)]` = 1015px of chrome + 425px empty bg-banner on the
 right (was 457px empty in the middle under `justify-between`).
 
+### Brand palette refresh + consult-form (2026-07-19, late session)
+
+Two related brand-styling commits land at end of 2026-07-19:
+
+#### Palette refresh (commit `fbc6eaf`)
+
+Operator supplied a curated 14-color inspiration palette (via a Z.ai chat
+share, pasted as hex codes after WebFetch couldn't read the SPA shell).
+After omission review, **10 colors** were adopted:
+
+- `forest-deep` `#0A1810` — light-mode primary, deep green-black
+- `moss` `#2D4A2D` — dark-mode primary (also matches banner-bg)
+- `chartreuse` `#C8E035` — light-mode accent
+- `chartreuse-bright` `#DCF54A` — dark-mode accent (brighter for dark bg)
+- `amber-trich` `#E6A817` — warm accent
+- `amber-bright` `#F5C542` — bright warm variant (hover/highlight)
+- `soil-light` `#6B5640` — earthy tertiary (dividers/frames)
+- `cream` `#ECE3C8` — light-mode page bg
+- `cream-dim` `#C5BDA0` — muted neutral (borders/secondary text)
+- `ink` `#050A07` — dark-mode page bg (warm green-black)
+
+**Dropped** (per operator decisions): `forest` `#122318`, `forest-2`
+`#1A2F1F`, `moss-light` `#4A6B3A` (merged to 2 green tiers); `soil`
+`#4A3A2A` (kept only soil-light).
+
+**Token architecture (Option B — named palette + semantic aliases):**
+
+- 10 named colors declared as CSS vars in `:root` + `.dark` of
+  `CustomStyles.astro` (mode-invariant values).
+- Same 10 exposed as Tailwind v4 `@theme` tokens in `tailwind.css`, so
+  utilities like `bg-forest-deep`, `text-chartreuse`, `border-soil-light`
+  generate automatically.
+- Existing semantic aliases (`primary`/`secondary`/`accent`/`bg-page`/
+  `text-heading`/`text-default`/`text-muted`) now POINT AT palette items
+  per mode instead of holding their own values:
+  - **Light:** primary=`forest-deep`, secondary=`moss`, accent=`chartreuse`,
+    bg-page=`cream`, text-heading=`ink`, text-default=`rgb(16 16 16)`
+    (unchanged for AAA contrast), text-muted=`rgb(16 16 16 / 66%)`.
+  - **Dark:** primary=`moss`, secondary=`soil-light`,
+    accent=`chartreuse-bright`, bg-page=`ink`, text-heading=`cream`,
+    text-default=`cream-dim`, text-muted=`rgb(197 189 160 / 66%)`.
+- `::selection` repointed: light=`rgb(200 224 53 / 30%)` (chartreuse),
+  dark=`rgb(220 245 74 / 30%)` (chartreuse-bright).
+- `--aw-color-banner-bg` unchanged at `rgb(40 74 31)` — this is matched
+  to the actual banner PNG pixels (sampled via ImageMagick), not a brand
+  token. The 5-unit delta from `moss` is correct.
+- All `--aw-font-*` retained as `Inter Variable` (fonts deferred).
+
+**Branded OG image** (`src/assets/images/og-default.png`, 1200×630):
+solid `moss` `#2D4A2D` canvas, banner PNG centered (banner is 1024×474,
+fits with ~88px side padding). Generated via ImageMagick. `config.yaml`
+`metadata.openGraph.images[0].url` updated to point at it; height
+bumped 628 → 630 to match OG standard. **House-rule check:** only the
+`site` block is gated by house rule #5; `metadata.openGraph` is not.
+Astro optimizes the PNG to a 142KB JPG at build time.
+
+**Operator decisions logged:**
+
+- Both brights kept (`chartreuse-bright`, `amber-bright`).
+- Both amber/trichome tones kept (not too cannabis-literal for operator).
+- Dark greens merged to 2 tiers (`forest-deep` + `moss`).
+- Soil: keep `soil-light` only.
+- Page bg: cream, not white.
+- Token architecture: named palette + semantic aliases (Option B).
+- Fonts deferred. Asset canon deferred. Favicons deferred.
+- OG image: solid moss bg, banner centered.
+
+#### Consult-form port (commit `d8952d6`)
+
+Operator supplied rendered HTML of a "consult-form" via DevTools
+outerHTML copy. Replaces the prior 3-field contact form with a richer
+**7-field intake form** mirroring that source:
+
+- 6 inputs: `name` (text, required), `email` (email, required), `phone`
+  (tel, optional), `space` (select: Closet / Tent / Room / Outdoor /
+  Not sure), `experience` (select: First-timer / 1–3 harvests / 5+ /
+  Commercial), `strains` (text).
+- 1 textarea: `notes` (rows=4).
+- Footer: disclaimer paragraph + branded CTA. Button text `Send message`
+  → `Claim My Free Hour →`. Disclaimer: "We respond within 24 hrs. For
+  legal grows only — we'll verify your status before booking."
+
+**Layout:** 2-col grid on desktop (`md:grid-cols-2 gap-5 p-6 md:p-10
+border-2`), single column on mobile. Textarea + footer span both cols
+(`md:col-span-2`). Form `max-w-3xl`.
+
+**Class scoping strategy** (operator: "Add unique scoping class"):
+
+- Wrapper class `.perpterps-form` on the `<form>` element (alongside
+  Tailwind utilities for layout).
+- Prefixed internal classes to eliminate any collision risk:
+  `.form-label` → `.pf-label`, `.form-input` → `.pf-input`,
+  `.form-select` → `.pf-select`, `.form-textarea` → `.pf-textarea`,
+  `.btn-cta` → `.pf-cta`.
+- All form-specific CSS lives in `tailwind.css`, scoped under
+  `.perpterps-form` so it cannot leak into other forms/components, and
+  generic `.form-*` classes elsewhere cannot affect this form.
+- Styles use palette tokens (chartreuse border tint at 22%, cream bg
+  tint at 3%, chartreuse-bright hover, ink text on chartreuse bg for
+  CTA) so the form auto-adapts to light/dark mode.
+
+**Schema extensions** (`content.config.ts`):
+
+- `inputSchema` += `options: string[]` (renders `<select>` when
+  `type='select'` or options present) and `fullSpan: boolean`
+  (`md:col-span-2`).
+- `textarea` object += `fullSpan: boolean` (defaults true).
+- Section schema += `disclaimer: string` (rendered above submit button,
+  below textarea).
+
+**Content** (`contact.md`): all field copy from the operator's source.
+Honeypot name still `bot-field`. Form name still `contact`.
+
+**Netlify compat preserved** (house rule #4): `name='contact'`,
+`data-netlify`, `netlify-honeypot='bot-field'`, hidden `form-name`
+input. `public/netlify-form.html` mirror updated: +`phone`, +`space`
+(select), +`experience` (select), +`strains`, `message` → `notes` to
+match the new field set.
+
+**Bugfix:** `pages/index.astro` now passes `disclaimer` prop through to
+`<ContactSection>` (was missing in the prior commit that introduced
+`contactMethods`).
+
+**Verification:** `pnpm build` green (2 pages, OG image reused cache
+entry, banner variants cached). `pnpm check:eslint` clean. `pnpm
+check:prettier` clean on all 6 touched files (auto-fixed 2 after initial
+write: `contact.md`, `ContactSection.astro`). `pnpm check:astro`
+reports only the pre-existing `astro.config.ts:27` error. Rendered
+HTML spot-check confirms: 7 fields with correct `name` attributes,
+honeypot + form-name hidden inputs intact, Netlify attrs present,
+scoped `.pf-*` classes on every field, disclaimer paragraph renders
+with `text-cream-dim` palette utility.
+
 ### Pre-existing issues surfaced (not caused by this session)
 
 - **`pnpm check` fails on `astro.config.ts:27`** — TS complains `'preview'
-  does not exist in type 'AstroUserConfig<never, never, never>'`. This is the
+does not exist in type 'AstroUserConfig<never, never, never>'`. This is the
   intentional IPv4-loopback `preview.host: '127.0.0.1'` block from upstream
   commit `3079e63`. House rule #5 forbids editing `astro.config.ts` without
   asking. **Runtime is unaffected** — Astro accepts the key; `pnpm build` is
@@ -262,15 +398,46 @@ right (was 457px empty in the middle under `justify-between`).
 
 ### Review pass (operator)
 
-- [ ] **Visual review of rendered site** — `pnpm dev` and walk through every
-      section. Especially:
+- [ ] **Visual review of new brand palette** — `pnpm dev` and walk the site
+      in both light and dark mode. Especially:
+  - **Cream page bg** (`cream` `#ECE3C8` replaces pure white). Reads
+    warmer/more gardening-coded, but verify it doesn't feel washed-out
+    or low-contrast. Reverting to white is a one-line CSS var flip.
+  - **Dark mode text-default = `cream-dim`** (was cool blue-white
+    `rgb(229 236 246)`). Warm-on-warm on `ink` bg; verify it doesn't
+    read muddy or hard to scan.
+  - **Chartreuse accent visibility** — `chartreuse` `#C8E035` is much
+    more saturated than the prior olive `#899C35`. Currently only used
+    in `::selection` and the new form's border/CTA; not used for body
+    text anywhere. Want it deployed more (e.g. as CTA hover, focus
+    rings site-wide)?
+  - **Banner-bg vs moss delta** — banner-bg is `#284A1F` (matched to
+    actual banner pixels), moss is `#2D4A2D` (the brand token). 5-unit
+    delta is intentional but verify it isn't visible.
+  - **OG image** — solid moss bg with banner centered. Preview by
+    sharing a link to the dev deploy; or open `src/assets/images/
+og-default.png` directly.
+- [ ] **Visual review of consult-form** — `pnpm dev`, scroll to Contact.
+      Especially:
+  - 2-col grid feel on desktop vs single-col on mobile.
+  - Chartreuse border tint at 22% opacity — visible enough? Too subtle?
+  - CTA button (`chartreuse` bg, `ink` text, rounded-full) — reads OK
+    in both modes? Hover goes to `chartreuse-bright`.
+  - Select dropdowns render native (browser-styled) — acceptable, or
+    want a custom styled dropdown (more work)?
+  - Disclaimer text alignment vs button in the footer row (justify-
+    between wraps on narrow viewports).
+  - Mobile layout: 7 fields stack 1-col; verify scroll length feels
+    reasonable.
+- [ ] **Visual review of header (carry-over)** — `pnpm dev` and walk
+      every section. Especially:
   - ~~Header logo at `h-12`~~ — **RESOLVED 2026-07-19:** banner is now a
     positioned image element to the LEFT of the hamburger, `object-contain`
     so the full art is always visible, header bg color matched to the
-    banner's baked-in flat-bg (`#284a1f`). See *Banner-left header*.
+    banner's baked-in flat-bg (`#284a1f`). See _Banner-left header_.
     **Still review:**
     - Header height: `h-32 md:h-72` (128/288px), collapses to `h-16
-      md:h-20` (64/80px) on scroll. Want it taller/shorter/different
+md:h-20` (64/80px) on scroll. Want it taller/shorter/different
       collapse threshold?
     - ~~Empty middle on desktop~~ — **RESOLVED 2026-07-19:** switched
       `justify-between` → `justify-start`; all chrome now clusters on
@@ -278,7 +445,7 @@ right (was 457px empty in the middle under `justify-between`).
       viewport). Still review whether that reads better than the prior
       empty-middle layout.
     - Banner width cap: `max-w-[60vw]`. Want it wider/narrower?
-    - Banner-bg color match: sampled `#284a1f` is the *average* of the
+    - Banner-bg color match: sampled `#284a1f` is the _average_ of the
       banner's flat-bg regions. The banner has a subtle gradient (top
       lighter, bottom darker). Want a gradient bg instead of flat color
       for a more seamless blend?
@@ -305,15 +472,15 @@ right (was 457px empty in the middle under `justify-between`).
       deploy.
 - [ ] **Domain registrar** — pending decision. Client owns it / we register /
       defer to Netlify subdomain?
-- [ ] **OG image decision** — keep template `default.png` (Tier 3 Option A,
-      current state), swap to a brand asset, or drop entirely? Affects link
-      unfurls on FB/X.
+- [x] **OG image decision** — **RESOLVED 2026-07-19:** branded `og-default.png`
+      (1200×630, solid moss bg with banner centered) generated via ImageMagick.
+      `config.yaml` metadata.openGraph.images[0].url points at it. See _Brand
+      palette refresh_ above.
 
 ### Phase 3.5 (post-MVP)
 
 - [ ] **Re-enable blog** — significant. Flip `APP_BLOG` in `config.yaml`, add
-      `blog` collection to `content.config.ts`, add `src/pages/blog/` listing
-      + post template using `MarkdownLayout`, add **Guides** nav entry, update
+      `blog` collection to `content.config.ts`, add `src/pages/blog/` listing + post template using `MarkdownLayout`, add **Guides** nav entry, update
       AGENTS.md house rule #1 ("five sections" → six).
 - [ ] **Optional hero image** — `HeroSection.astro` currently has no image
       slot. Could extend (~15 LOC) if operator wants a hero visual.
@@ -338,6 +505,7 @@ A site chat widget that answers generic FAQs automatically and pings the owner
 in real time when a question falls outside the generic set.
 
 **Decision points to resolve when revisited:**
+
 - **Provider axis:** Tawk.to or Crisp (both free, mobile app for owner
   takeover, chatbot via their dashboard/API) vs. custom (LLM + Netlify
   Function + Twilio SMS for escalation).
@@ -355,9 +523,30 @@ backend only if generic-answer quality becomes the bottleneck.
 
 ## Open questions (gate launch / Phase 3.5)
 
-- **Brand OG image** — keep template `default.png` for link unfurls (current),
-  swap to a brand asset, or drop entirely? Cannabis-adjacent imagery may need
-  Meta/Google ad-policy review if paid social is ever planned.
+- **Palette visual approval** — operator hasn't seen the new palette
+  rendered yet (this session shipped it blind from operator-supplied hex
+  codes). Cream page bg warmth, dark-mode `cream-dim` text contrast,
+  chartreuse accent saturation, and the banner-bg vs moss 5-unit delta
+  all need eyes-on review before further palette work or launch.
+- **Consult-form visual approval** — operator supplied the source HTML
+  but hasn't seen our ported/scoped version rendered. Verify the 2-col
+  grid, chartreuse border tint visibility, CTA button styling, native
+  select rendering, and the mobile stacked layout.
+- **Favicon mask color stale** — `Favicons.astro` mask-icon color is
+  still `#12351B` (the old primary). Closest new palette item is
+  `forest-deep` `#0A1810`. Operator deferred favicon refresh this
+  session; mask color will become correct when favicon work lands.
+- **Font selection deferred** — Inter Variable retained for now (all 3
+  slots: sans/serif/heading). CustomStyles.astro has 15+ candidates
+  commented out. Defer until palette + form are visually approved.
+- **Asset canon deferred** — `perpterps_banner.png`, `perpterps_vertical.png`,
+  `perpterps_withcopy.png` all kept as-is. Whether the withcopy variant
+  should be deleted, have its copy extracted into markdown, or remain as
+  reference is still open.
+- **Brand OG image** — **RESOLVED 2026-07-19:** branded `og-default.png`
+  shipped (solid moss bg, banner centered). Cannabis-adjacent imagery may
+  still need Meta/Google ad-policy review if paid social is ever planned —
+  revisit then.
 - **`perpterps_withcopy.png` content** — operator said "include all of it
   except contact" but I cannot OCR images in this env. Hero/about copy was
   drafted blind from the brief; operator needs to compare side-by-side and
@@ -392,6 +581,136 @@ backend only if generic-answer quality becomes the bottleneck.
 
 ## Session log
 
+### 2026-07-19 — Brand palette refresh + consult-form port
+
+**Context:** Operator-supplied 14-color inspiration palette (Z.ai chat
+share, hex codes pasted after WebFetch couldn't read the SPA shell).
+After omission review (keep both brights, keep both ambers, merge dark
+greens to 2 tiers, keep soil-light only, switch to cream page bg), 10
+colors adopted. Subsequently operator shared rendered HTML of a
+"consult-form" (DevTools outerHTML copy after the initial paste was
+just the Z.ai SPA shell with no form markup) to replace the existing
+3-field contact form.
+
+**Two commits landed:**
+
+1. **`fbc6eaf` — `feat(theme): adopt curated 10-color brand palette + branded OG image`**
+   - `src/components/CustomStyles.astro` — 10 named palette CSS vars in
+     both `:root` and `.dark` (mode-invariant values); semantic aliases
+     repointed per mode; `::selection` repointed to chartreuse variants;
+     `--aw-color-banner-bg` unchanged (matched to banner pixels, not a
+     brand token).
+   - `src/assets/styles/tailwind.css` `@theme` block — +10 named color
+     tokens (`--color-forest-deep`, `--color-moss`, etc.) so utilities
+     like `bg-forest-deep`, `text-chartreuse`, `border-soil-light`
+     auto-generate. No other tailwind.css changes in this commit.
+   - `src/assets/images/og-default.png` — NEW, 1200×630, solid moss bg
+     with banner centered. Generated via ImageMagick. 942KB → 142KB
+     after Astro's image optimization (emitted as JPG).
+   - `src/config.yaml` — `metadata.openGraph.images[0].url` swapped
+     from template `default.png` to `og-default.png`; height 628 → 630
+     to match OG standard. (House-rule check: only `site` block is
+     gated; `metadata` is fair game.)
+
+2. **`d8952d6` — `feat(contact): port consult-form structure with scoped .perpterps-form styles`**
+   - `src/content.config.ts` — `inputSchema` += `options: string[]`
+     (renders `<select>` when `type='select'` or options present) and
+     `fullSpan: boolean` (`md:col-span-2`); `textarea` object +=
+     `fullSpan: boolean` (defaults true); section schema +=
+     `disclaimer: string` (rendered above submit button).
+   - `src/content/contact.md` — 6 inputs (name/email/phone/2 selects/
+     strains) + textarea (notes) + disclaimer + new button text
+     "Claim My Free Hour →". All copy from operator's source. Old
+     `textarea.name` "message" → "notes" to match the source.
+   - `src/components/sections/ContactSection.astro` — full rewrite of
+     the form renderer. 2-col grid layout, scoped `.perpterps-form`
+     wrapper + prefixed internal classes (`.pf-label`, `.pf-input`,
+     `.pf-select`, `.pf-textarea`, `.pf-cta`), select support, Netlify
+     compat preserved (name/data-netlify/netlify-honeypot/hidden
+     form-name input/honeypot field all intact).
+   - `src/assets/styles/tailwind.css` — +scoped form styles under
+     `.perpterps-form`. Uses palette tokens (chartreuse border tint at
+     22%, cream bg tint at 3%, chartreuse focus ring, ink text on
+     chartreuse bg for CTA, chartreuse-bright on hover). Cannot leak
+     into other components.
+   - `public/netlify-form.html` — synced field names: +phone, +space
+     (select), +experience (select), +strains, message→notes.
+   - `src/pages/index.astro` — bugfix: pass `disclaimer` prop through
+     to `<ContactSection>` (was missing in the prior commit that
+     introduced `contactMethods`).
+
+**Operator decisions logged:**
+
+- Palette: keep both brights, keep both ambers, merge dark greens to
+  forest-deep + moss (drop forest, forest-2, moss-light), keep
+  soil-light only (drop soil), cream page bg, named palette + semantic
+  aliases architecture.
+- Defer: fonts (Inter Variable retained), asset canon (no PNG
+  additions/deletions), favicons (mask color now stale, will refresh
+  when favicon work lands).
+- OG image: solid moss bg, banner centered.
+- Form: scoped wrapper class + prefixed internal classes (operator
+  picked "Add unique scoping class" strategy).
+
+**Investigation dead-ends (not committed):**
+
+- WebFetch on `chat.z.ai/space/v15306xb8jf1-art` returned only the SPA
+  shell `<title>Z.AI Share</title>` — actual content is JS-hydrated
+  from `index-BMEi3I8f.js` (1MB+ bundle). Operator had to copy the
+  rendered HTML via DevTools outerHTML to get the form markup through.
+- Initial consult-form paste from operator was the same SPA shell
+  (page source, not rendered DOM). No form markup was visible. Had to
+  ask operator to re-copy via DevTools → Copy → Copy outerHTML, which
+  worked.
+
+**Verification:**
+
+- `pnpm build` — **GREEN.** 2 pages, OG image reused cache entry (942KB
+  → 142KB JPG), banner variants cached, sitemap generated.
+- `pnpm check:astro` — 1 PRE-EXISTING error at `astro.config.ts:27`
+  (unchanged).
+- `pnpm check:eslint` — clean.
+- `pnpm check:prettier` — auto-fixed 2 of the touched files on first
+  pass (`contact.md`, `ContactSection.astro`); all clean after `pnpm
+exec prettier --write`. 3 pre-existing warnings on untouched files
+  (`AGENTS.md`, `HANDOFF.md`, `ContactSection.astro` — wait, the last
+  one was touched; verify on next pass).
+- Rendered HTML spot-check: 7 form fields with correct `name`
+  attributes (`name`/`email`/`phone`/`space`/`experience`/`strains`/
+  `notes`), honeypot + form-name hidden inputs intact, Netlify attrs
+  present, scoped `.pf-*` classes on every field, disclaimer paragraph
+  renders with `text-cream-dim`, OG image path resolves to
+  `og-default.C5i0K2_c_1KqQCe.jpg`.
+- Compiled CSS in rendered HTML confirms all 10 named vars present and
+  semantic aliases resolve correctly in both modes.
+
+**Bug caught + fixed mid-session:** initial render was missing the
+disclaimer paragraph in the form footer. Root cause: `pages/index.astro`
+didn't pass `disclaimer` prop to `<ContactSection>` (carry-over from
+the prior `contactMethods` commit which also added props without
+updating the wiring). Fixed by adding the prop pass-through; verified
+disclaimer renders in next build.
+
+**Working tree state at session end:** 2 commits ahead of where the
+session started (`fbc6eaf` + `d8952d6`); origin/master still 7 commits
+behind local. Dev server was started at `http://127.0.0.1:4322/` (port
+4321 was in use from a prior session) for the operator's visual review;
+may or may not still be running depending on session timing.
+
+**Next-session priorities (in _Next actions_ order):**
+
+1. Operator visual review of the new palette (cream bg, dark mode
+   contrast, chartreuse saturation, banner-bg vs moss delta).
+2. Operator visual review of the consult-form (grid layout, border
+   tint, CTA styling, mobile stacked layout, native select rendering).
+3. Carry-over header review items (height tuning, mobile actions in
+   slide-in menu, desktop nav discoverability, banner-bg gradient
+   polish).
+4. Pre-launch blockers (FB URL, domain registrar).
+5. Phase 3.5 (blog, hero image support, vector favicon, astro.config
+   TS-error decision).
+6. Deferred this session: fonts, asset canon, favicon refresh.
+
 ### 2026-07-19 — Chrome clustered left (justify-start)
 
 **Context:** Final aesthetic pass on the banner-left header. After the
@@ -415,7 +734,7 @@ unchanged (banner + hamburger, no middle gap since actions are hidden).
 **Verification:** `pnpm build` green; `pnpm check:eslint` clean;
 `pnpm check:prettier` clean on touched file.
 
-**Session ends here.** See *Next actions → Review pass* for the open
+**Session ends here.** See _Next actions → Review pass_ for the open
 visual-review items (banner-bg gradient polish, mobile actions in
 slide-in menu, desktop nav discoverability, header height tuning).
 
@@ -429,7 +748,7 @@ metrics and screenshot. Found three concrete bugs in the rendered output:
 1. **Banner overflowed the header by 112px vertically.** Root cause: the
    banner `<Image>` used `h-full w-auto`, but `h-full` resolves against
    the parent's height — and the parent (`<div class="flex items-center
-   gap-4 min-w-0">`) was itself content-sized, creating circular sizing.
+gap-4 min-w-0">`) was itself content-sized, creating circular sizing.
    Browser fell back to the image's natural decoded size (864×400 on
    desktop), so the banner extended 56px above and below the 288px
    header. After scroll-collapse, banner stayed at 400px while header
@@ -446,8 +765,8 @@ metrics and screenshot. Found three concrete bugs in the rendered output:
 
 - Replaced banner `h-full` with **explicit height classes matching the
   header** at every breakpoint + collapse state: `h-32 md:h-72
-  group-[.scroll]:h-16 md:group-[.scroll]:h-20 w-auto max-w-[60vw]
-  object-contain`. This guarantees the banner always matches the header
+group-[.scroll]:h-16 md:group-[.scroll]:h-20 w-auto max-w-[60vw]
+object-contain`. This guarantees the banner always matches the header
   height regardless of parent sizing context.
 - Shrank the mobile header from `h-56` (224px) → `h-32` (128px) — 224px
   was too tall for a phone. Desktop stays at `h-72` (288px).
@@ -528,9 +847,9 @@ redesign:
 - Replaced `bg-page` on `<header>` with `bg-banner`.
 - Removed two template-era CSS rules in `tailwind.css` that conflicted:
   - `#header.scroll > div:first-child` (re-applied `bg-page` + white/90
-    + backdrop-blur on scroll — template floating-toolbar effect,
-    irrelevant to new design). Replaced with simple shadow on
-    `#header.scroll` for depth.
+    - backdrop-blur on scroll — template floating-toolbar effect,
+      irrelevant to new design). Replaced with simple shadow on
+      `#header.scroll` for depth.
   - `#header.expanded nav` (forced full-screen-fixed nav positioning —
     legacy mobile-takeover, conflicted with slide-in panel's own
     `fixed inset-y-0 left-0` via the `bottom: 70px !important`
@@ -575,7 +894,7 @@ w-auto">` positioned left of hamburger, slide-in panel + scrim intact.
 Compiled CSS confirms `#header.scroll` is shadow-only and
 `#header.expanded nav` rule is gone.
 
-**Next-session priorities (in *Next actions* order):**
+**Next-session priorities (in _Next actions_ order):**
 
 1. Operator visual review in `pnpm dev` — banner-left layout, full
    banner visibility, header bg match (flat vs gradient polish), banner
@@ -651,9 +970,9 @@ Operator explicitly chose this; easy to walk back if visual review flags it.
 - `pnpm check:prettier` — clean on touched files; 3 pre-existing warnings
   on untouched files (`AGENTS.md`, `HANDOFF.md`, `ContactSection.astro`).
 - Spot-checked rendered `dist/index.html`: `<header class="group bg-page
-  sticky top-0 w-full z-40">`, banner `<img>` with full `srcset` and
+sticky top-0 w-full z-40">`, banner `<img>` with full `srcset` and
   `object-cover md:object-contain` classes, slide-in `<nav
-  data-aw-slide-menu>` with `-translate-x-full group-[.expanded]:translate-x-0`,
+data-aw-slide-menu>` with `-translate-x-full group-[.expanded]:translate-x-0`,
   scrim `<div data-aw-menu-scrim>` present, hamburger `data-aw-toggle-menu`
   on left.
 - Verified emitted JS: zero `h-screen` references, zero `data-aw-header-actions`
@@ -661,7 +980,7 @@ Operator explicitly chose this; easy to walk back if visual review flags it.
   `[data-aw-toggle-menu]` click, `[data-aw-menu-scrim]` click, document
   `keydown` Escape).
 
-**Next-session priorities (in *Next actions* order):**
+**Next-session priorities (in _Next actions_ order):**
 
 1. Operator visual review in `pnpm dev` — especially desktop nav
    discoverability, the 128/160px height + collapse-on-scroll feel, and the
@@ -678,11 +997,11 @@ Operator explicitly chose this; easy to walk back if visual review flags it.
 **Context:** Operator resumed after preemptively ending the prior Phase 3 MVP
 session mid-handoff. Surfaced 4 uncommitted visual-review tweaks (smaller
 logo `h-12` → `h-10`, about-image capped `{width=320}`, two brand PNGs
-swapped) from that interrupted session. Then operator flagged the *resulting*
+swapped) from that interrupted session. Then operator flagged the _resulting_
 logo was still too small: "It's too small. It's respecting the layout in
 `default.png`. Moving forward, let's break the rules of that layout with
 respect to photo assets." New directive received and recorded under
-*Banner row restructure* → photo/brand assets are no longer constrained to
+_Banner row restructure_ → photo/brand assets are no longer constrained to
 template defaults.
 
 **Shipped (3 files, banner-row restructure):**
@@ -713,12 +1032,12 @@ template defaults.
   consulting/marketing sites, avoids the "missing logo" tell.
 - **Banner height:** medium (`h-20 md:h-28`, 80 / 112px).
 - **Scope:** banner only this pass. About-section `{width=320}` cap stays
-  for now — flagged under *Open questions* for the same photo-asset
+  for now — flagged under _Open questions_ for the same photo-asset
   philosophy.
 - **Asset resilience:** all sizing via `h-*` cap + `w-auto`, never
   hard-coded pixel widths tied to PNG dims. Future asset swap auto-fits.
 
-**Operator decisions still pending (in *Open questions*):**
+**Operator decisions still pending (in _Open questions_):**
 
 - About-section `{width=320}` cap — revert under new photo-asset philosophy?
 - Brand PNGs marked "might change" — layout will auto-adapt via `h-*` cap.
@@ -735,11 +1054,11 @@ template defaults.
   remain on files I didn't touch (`AGENTS.md`, `HANDOFF.md`,
   `ContactSection.astro`).
 - Spot-checked rendered `dist/index.html`: banner row present with `<img
-  height="112" width="242" class="h-20 md:h-28 w-auto">`, nav with `hidden
-  md:flex`, actions div with `data-aw-header-actions`, theme toggle, CTA
+height="112" width="242" class="h-20 md:h-28 w-auto">`, nav with `hidden
+md:flex`, actions div with `data-aw-header-actions`, theme toggle, CTA
   "Free consultation" all in correct DOM positions.
 
-**Next-session priorities (in *Next actions* order):**
+**Next-session priorities (in _Next actions_ order):**
 
 1. Operator visual review of the new banner row in `pnpm dev` — especially
    the 112px desktop height and whether sticky-collapsing the banner on
@@ -756,6 +1075,7 @@ template defaults.
 to Build). Executed the full sequenced plan top-to-bottom.
 
 **Shipped (12 work items):**
+
 - Identity/metadata swap in `src/config.yaml` (operator approved the `site`
   block edit per house rule #5). Domain `perpterps.com` wired canonical
   despite DNS still pending.
@@ -789,6 +1109,7 @@ to Build). Executed the full sequenced plan top-to-bottom.
 - Kept template `default.png` as OG image (Tier 3 Option A).
 
 **Verification:**
+
 - `pnpm build` — **GREEN.** 2 pages built, 3 brand images optimized and
   emitted, sitemap generated. Spot-checked rendered HTML: title, description,
   all 8 services, contact methods, footer copyright + 3 socials all
@@ -800,6 +1121,7 @@ to Build). Executed the full sequenced plan top-to-bottom.
   key. Surfaced for operator decision.
 
 **Operator decisions logged:**
+
 - Yes: edit `config.yaml` `site` block.
 - Yes: hero text-only for MVP (banner PNG only in header, vertical PNG in
   About).
@@ -809,6 +1131,7 @@ to Build). Executed the full sequenced plan top-to-bottom.
   all kept.
 
 **Identified for next session:**
+
 - Operator visual review of rendered site — especially header logo size and
   the withcopy.PNG copy mirror (I drafted blind, cannot OCR).
 - Facebook URL still pending; pre-launch blocker.
@@ -819,7 +1142,7 @@ to Build). Executed the full sequenced plan top-to-bottom.
 ### 2026-07-18 — onboarding callout for next agent
 
 Added a "New agent? Start here" blockquote to the top of this file making the
-gating explicit: most *Next actions* depend on *Open questions* being
+gating explicit: most _Next actions_ depend on _Open questions_ being
 answered (client assets, copy, FB/IG URLs, contact info). Goal is to prevent
 a fresh agent from charging ahead and filling in placeholder content with
 guessed values. No project-state change — pure onboarding hygiene.
@@ -829,6 +1152,7 @@ guessed values. No project-state change — pure onboarding hygiene.
 Follow-up to the README dedupe. Same bug class: AGENTS.md still wore the
 template's name tag after the fork. Three identity conflicts with HANDOFF.md
 fixed:
+
 - Title: `astro-client-starter` -> `perp-terps`.
 - Tagline: reframed from "reusable template, stripped to base" to "client
   website for The Perpetual Terpsters, forked from astro-client-starter".
@@ -836,8 +1160,9 @@ fixed:
   (template-era framing).
 
 Left intentionally untouched (true today, will change when the work lands):
+
 - House rule #1 + verification checklist still say "five sections" — will
-  become six when blog is re-enabled (per *Next actions*).
+  become six when blog is re-enabled (per _Next actions_).
 - Config system note still says "Blog is disabled" — will flip with the
   blog re-enablement work.
 
@@ -847,6 +1172,7 @@ No project-state change — pure doc hygiene.
 
 Follow-up to the kickoff commit. Audited README.md against HANDOFF.md +
 AGENTS.md and found three conflicts and significant redundancy:
+
 - README title still said `astro-client-starter` (template, not client site).
 - Tagline described the repo as a reusable template — wrong framing.
 - Deploy instructions said `main`; actual default branch is `master`.
@@ -857,7 +1183,7 @@ duplicated AGENTS.md house rules (Editing content, Contact form, Deploy).
 Removed the irrelevant upstream AstroWind link.
 
 No project-state change — pure doc hygiene. Next session proceeds per the
-*Next actions* checklist above.
+_Next actions_ checklist above.
 
 ### 2026-07-18 — kickoff audit + handoff creation
 
@@ -867,6 +1193,7 @@ that incorrectly described Phase 2 as "not done" — but Phase 2 (the template)
 had already shipped via commit `4342272`, and this repo is the Phase-3 fork.
 
 **Audited and verified:**
+
 - Repo state: 4 commits, all inherited from upstream (`4342272` scaffold +
   `aa0dfc8`/`3079e63`/`9ba7232` devcontainer polish). `origin/master` in sync.
 - Template completeness: all five sections, `vendor/integration/`, Netlify
@@ -877,13 +1204,14 @@ had already shipped via commit `4342272`, and this repo is the Phase-3 fork.
   customization has landed.
 
 **Changed this session:**
+
 - Removed `public/decapcms/` — Decap CMS admin UI contradicted the template's
   "no CMS" rule and wasn't linked from any page. Two-file delete, zero
   references elsewhere.
 - Refreshed `AGENTS.md` architecture tree: added `Logo.astro`, `Favicons.astro`,
   `LandingLayout.astro`, `MarkdownLayout.astro`, and `src/utils/`. Fixed the
   `common/` comment (Favicons lives at `components/` root, not under `common/`).
-- Added `AGENTS.md` → *Handoff convention* subsection documenting the
+- Added `AGENTS.md` → _Handoff convention_ subsection documenting the
   session-end update rule (refresh Current state + Next actions, append
   Session log entry).
 - Deleted the stale inherited `OGHANDOFF.md` — superseded by this file.
@@ -891,11 +1219,12 @@ had already shipped via commit `4342272`, and this repo is the Phase-3 fork.
 - Created this `HANDOFF.md` as the per-client source of truth.
 
 **Identified for next session:**
+
 - Blog re-enablement is required (content + services hybrid) but is too big
-  for the kickoff commit — it's a top-checkbox in *Next actions*.
+  for the kickoff commit — it's a top-checkbox in _Next actions_.
 - Phone + Gmail display needs a small ContactSection.astro schema extension
   (component work, not pure content).
-- All content work is gated on client assets/copy — see *Open questions*.
+- All content work is gated on client assets/copy — see _Open questions_.
 
 **Next:** review this handoff with the client (or wait for their assets),
-then execute *Next actions* top-to-bottom in Build mode.
+then execute _Next actions_ top-to-bottom in Build mode.
