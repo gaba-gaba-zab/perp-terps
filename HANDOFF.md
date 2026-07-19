@@ -121,22 +121,24 @@ containing three layers:
    md:group-[.scroll]:h-20 transition-[height]` — short header on mobile
    (128px), tall on desktop (288px), collapses to 64/80px after scrolling
    60px (existing scroll-tracking JS in `BasicScripts.astro` adds `.scroll`
-   to `#header`). Edge-to-edge `flex justify-between items-center` with
-   two clusters:
-   - **Left cluster** (`flex items-center gap-4 min-w-0`): banner `<Image>`
-     + hamburger. Banner uses **explicit height classes matching the
-     header** (`h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:h-20
-     w-auto max-w-[60vw] object-contain`) — `h-full` was tried first but
-     is circular (parent is content-sized, browser falls back to image's
-     natural decoded size → banner overflows the header). Explicit `h-*`
-     classes guarantee the banner always matches the header height at
-     every breakpoint and collapse state. Responsive `srcset` widths
-     `[400, 800, 1200]`, `sizes="60vw"` (3 webp variants emitted).
-     `alt={SITE.name}` for screen-reader continuity.
-   - **Right cluster** (`hidden md:flex items-center gap-3 shrink-0`):
-     theme toggle + CTA. **Hidden on mobile** (doesn't fit alongside
-     banner + hamburger in a 375px viewport — was overlapping the banner
-     by 131px before the fix). Mobile users access nav via the hamburger
+   to `#header`). **`flex justify-start items-center gap-4 md:gap-8`** —
+   all chrome clustered on the LEFT, empty bg-banner color stretches
+   right (operator iteration on 2026-07-19; was `justify-between` which
+   left ~457px empty in the middle). Two clusters:
+   - **Banner + hamburger** (`flex items-center gap-4 min-w-0`): banner
+     `<Image>` + hamburger. Banner uses **explicit height classes matching
+     the header** (`h-32 md:h-72 group-[.scroll]:h-16 md:group-[.scroll]:
+     h-20 w-auto max-w-[60vw] object-contain`) — `h-full` was tried first
+     but is circular (parent is content-sized, browser falls back to
+     image's natural decoded size → banner overflows the header).
+     Explicit `h-*` classes guarantee the banner always matches the
+     header height at every breakpoint and collapse state. Responsive
+     `srcset` widths `[400, 800, 1200]`, `sizes="60vw"` (3 webp variants
+     emitted). `alt={SITE.name}` for screen-reader continuity.
+   - **Actions** (`hidden md:flex items-center gap-3 shrink-0`): theme
+     toggle + CTA. **Hidden on mobile** (doesn't fit alongside banner +
+     hamburger in a 375px viewport — was overlapping the banner by 131px
+     before the fix). Mobile users access nav via the hamburger only;
      only; theme toggle and CTA are desktop-only for now. `shrink-0` so
      they don't get squeezed by the banner.
 2. **Slide-in nav panel** (fixed): unchanged from prior iteration —
@@ -217,6 +219,10 @@ asset directive (commit `6703ad7`).
   hamburger + theme + CTA couldn't fit in 375px viewport; was overlapping
   by 131px. Theme toggle + CTA now desktop-only.
 - **Header bg color = banner's baked-in flat-bg color** (`#284a1f`).
+- **Chrome layout**: `justify-start gap-4 md:gap-8` — all chrome (banner +
+  hamburger + theme + CTA) clustered on the left, empty bg-banner color
+  stretches right. (Operator iteration: was `justify-between`, which left
+  ~457px of empty green in the middle of the desktop layout.)
 - **Banner width cap `max-w-[60vw]`** to leave room for hamburger + actions.
 - Slide-in panel + scrim + outside-click + Escape dismiss (unchanged
   from prior iteration).
@@ -232,10 +238,10 @@ header is 1440×288, banner is 622×288 flush at (24, 0) with no overflow,
 hamburger 48×48 at (662, 120) vertically centered, actions 249×41 at
 (1167, 123); on 375×750 mobile, header is 375×128, banner 225×128 at
 (16, 0), hamburger 48×48 at (257, 40), actions hidden; after-scroll
-collapse shrinks banner to 173×80 properly. **Known aesthetic issue:**
-on desktop, banner (622) + hamburger (48) leaves ~457px of empty
-banner-bg between the left cluster and the right cluster — visually
-heavy, may still read as "off." Awaiting operator visual review.
+collapse shrinks banner to 173×80 properly. With `justify-start`,
+desktop layout is `[banner (622) | gap (16) | hamburger (48) | gap (32)
+| actions (249)]` = 1015px of chrome + 425px empty bg-banner on the
+right (was 457px empty in the middle under `justify-between`).
 
 ### Pre-existing issues surfaced (not caused by this session)
 
@@ -266,11 +272,11 @@ heavy, may still read as "off." Awaiting operator visual review.
     - Header height: `h-32 md:h-72` (128/288px), collapses to `h-16
       md:h-20` (64/80px) on scroll. Want it taller/shorter/different
       collapse threshold?
-    - **Empty middle on desktop**: banner (622) + hamburger (48) leaves
-      ~457px of empty banner-bg color before the actions cluster on the
-      right. Want chrome clustered closer together (`justify-start` or
-      `justify-center`), or accept the empty-middle as a "banner-led"
-      look?
+    - ~~Empty middle on desktop~~ — **RESOLVED 2026-07-19:** switched
+      `justify-between` → `justify-start`; all chrome now clusters on
+      the left with empty bg-banner on the right (~425px at 1440
+      viewport). Still review whether that reads better than the prior
+      empty-middle layout.
     - Banner width cap: `max-w-[60vw]`. Want it wider/narrower?
     - Banner-bg color match: sampled `#284a1f` is the *average* of the
       banner's flat-bg regions. The banner has a subtle gradient (top
@@ -385,6 +391,33 @@ backend only if generic-answer quality becomes the bottleneck.
 ---
 
 ## Session log
+
+### 2026-07-19 — Chrome clustered left (justify-start)
+
+**Context:** Final aesthetic pass on the banner-left header. After the
+layout fixes in `308a2e3` resolved the overflow/overlap bugs, operator
+chose to address the remaining "empty middle" aesthetic (425-457px of
+empty bg-banner color between banner+chrome and the right-aligned
+actions) by clustering all chrome to the left.
+
+**Change (1 file, 1 line):** `Header.astro` chrome row `flex
+justify-between` → `flex justify-start gap-4 md:gap-8`. All chrome
+(banner + hamburger + theme + CTA) now clusters on the left; empty
+bg-banner color stretches right. Bumped gap from `gap-4` to `gap-4
+md:gap-8` for breathing room between the banner+menu group and the
+actions group on desktop.
+
+Desktop 1440 layout math post-change: banner (622) + gap-4 (16) +
+hamburger (48) + gap-8 (32) + actions (249) + padding (48) = 1015px
+used, 425px empty bg-banner color on the right. Mobile layout
+unchanged (banner + hamburger, no middle gap since actions are hidden).
+
+**Verification:** `pnpm build` green; `pnpm check:eslint` clean;
+`pnpm check:prettier` clean on touched file.
+
+**Session ends here.** See *Next actions → Review pass* for the open
+visual-review items (banner-bg gradient polish, mobile actions in
+slide-in menu, desktop nav discoverability, header height tuning).
 
 ### 2026-07-19 — Banner-left layout fixes (Playwright-inspected)
 
